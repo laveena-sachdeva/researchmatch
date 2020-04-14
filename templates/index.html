@@ -5,6 +5,10 @@
 		      <h1>Welcome to the Djungle !</h1>
 		          {% if user.is_authenticated %}
 			          <h2>Hello {{ user.username }}</h2>
+  			          <h2> here {{ user.myuser.portfolio_site}}</h2>
+
+		            <img src = "{{ user.myuser.profile_pic.url }}" width = "240" />
+
 				      {% else %}
 				              <h2>Register or Login if you'd like to</h2>
 					          {% endif %}

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'homepage'
 ]
 
+# AUTH_PROFILE_MODULE = homepage.UserProfileInfoForm
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

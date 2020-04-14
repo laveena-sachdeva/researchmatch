@@ -5,6 +5,7 @@
 {% block content %}
 {% if user.is_authenticated %}
   <div style="text-align:center">Hi {{ user.username }}! Welocme to Coding Infinite!!</div>
+  <img src = "{{ user.UserProfileInfo.profile_pic }}" width = "240" />
     <p><a href="{% url 'logout' %}">logout</a></p>
     {% else %}
       <p>You are not logged in</p>

@@ -19,6 +19,9 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url,include
 from homepage import views
+from myloginproject import settings
+from django.contrib.staticfiles.urls import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 #urlpatterns = [
 #    path('admin/', admin.site.urls),
@@ -31,4 +34,6 @@ urlpatterns = [
                     url(r'^special/',views.special,name='special'),
                         url(r'^homepage/',include('homepage.urls')),
                             url(r'^logout/$', views.user_logout, name='logout'),
-                            ]
+                             # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
+]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
