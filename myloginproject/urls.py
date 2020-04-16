@@ -31,9 +31,13 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
             path('admin/', admin.site.urls),
                 url(r'^$',views.index,name='index'),
+                url(r'^student$',views.index_student,name='index_student'),
+                url(r'^professor$',views.index_student,name='index_professor'),
                     url(r'^special/',views.special,name='special'),
                         url(r'^homepage/',include('homepage.urls')),
                             url(r'^logout/$', views.user_logout, name='logout'),
+                            url(r'^jobpost/$', views.post_a_job, name='job_form'),
+                            url(r'^save_job/$', views.save_job, name='save_job'),
                              # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
