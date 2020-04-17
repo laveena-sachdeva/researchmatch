@@ -29,7 +29,7 @@ JOB_TYPE = (
 
 
 class Job(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=300)
     description = models.TextField()
     location = models.CharField(max_length=150)
@@ -43,5 +43,7 @@ class Job(models.Model):
     filled = models.BooleanField(default=False)
     salary = models.IntegerField(default=0, blank=True)
 
+    def set_user(self, user):
+    	self.user  = user
     def __str__(self):
         return self.title
