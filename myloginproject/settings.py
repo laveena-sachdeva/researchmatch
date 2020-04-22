@@ -25,7 +25,7 @@ SECRET_KEY = 'u_&&fo173))+(5^+$ylbnn#ir!mf&pljhhaxz9n%!=zs3v*1%p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -77,11 +77,48 @@ WSGI_APPLICATION = 'myloginproject.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/cc-first-web-project:us-east1:cc-first-web-app-instance2',
+            'USER': 'laveena2',
+            'PASSWORD': 'laveena2',
+            'NAME': 'researchmatch2',
+        }
 }
+# [START db_setup]
+if os.getenv('GAE_APPLICATION', None):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/cc-first-web-project:us-east1:cc-first-web-app-instance2',
+            'USER': 'laveena2',
+            'PASSWORD': 'laveena2',
+            'NAME': 'researchmatch2',
+        }
+    }
+else:
+    # Running locally so connect to either a local MySQL instance or connect to
+    # Cloud SQL via the proxy. To start the proxy via command line:
+    #
+    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'NAME': 'researchmatch2',
+            'USER': 'laveena2',
+            'PASSWORD': 'laveena2',
+        }
+    }
 
 
 # Password validation
@@ -129,8 +166,9 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 STATIC_DIR = os.path.join(BASE_DIR,'static')
 MEDIA_DIR = os.path.join(BASE_DIR,'media')
 
+STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [STATIC_DIR,]
+# STATICFILES_DIRS = [STATIC_DIR,]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 LOGIN_URL = '/homepage/user_login/'

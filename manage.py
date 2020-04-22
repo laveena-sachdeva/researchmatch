@@ -7,6 +7,9 @@ import sys
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myloginproject.settings')
     try:
+            # Override default port for `runserver` command
+        from django.core.management.commands.runserver import Command as runserver
+        runserver.default_port = "8080"
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
