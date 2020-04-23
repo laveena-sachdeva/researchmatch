@@ -38,6 +38,9 @@ urlpatterns = [
                             url(r'^logout/$', views.user_logout, name='logout'),
                             url(r'^jobpost/$', views.post_a_job, name='job_form'),
                             url(r'^save_job/$', views.save_job, name='save_job'),
+                            url(r'^alljobs/$', views.jobs_list_view, name='jobs_list_view'),
+                            url(r'^job_details/([0-9]*)/$',views.job_details,name='job_details'),
+
                              # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

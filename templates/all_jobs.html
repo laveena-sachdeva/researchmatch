@@ -1,0 +1,47 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body_block %}
+
+        <div class="container">
+            <h3 class="heading">Currently Available Jobs</h3>
+            <div class="row featured align-items-stretch">
+                {% for job in alljobs %}
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <div class="box-image-text bg-visible full-height">
+                            <div class="top">
+                                <a href="#">
+<!--                                     <div class="image">
+                                        <img src="{% static 'img/featured1.jpg' %}" alt="" class="img-fluid">
+                                    </div> -->
+                                    <div class="bg"></div>
+                                    <div class="logo">
+                                        <img src="{% static 'img/company-1.png' %}" alt="" style="max-width: 80px;">
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="content">
+                                <p> The job id is {{ job.id }}</p>
+                                <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5>                                
+                                <p class="featured__details"><i class="fa fa-map-marker job__location"></i>
+                                    {{ job.location }}
+                                    {% if job.type == '1' %}
+                                        <span class="badge featured-badge badge-success">Full time</span>
+                                    {% elif job.type == '2' %}
+                                        <span class="badge featured-badge badge-primary">Part time</span>
+                                    {% else %}
+                                        <span style="color: #ffffff;" class="badge featured-badge badge-warning">Internship</span>
+                                    {% endif %}
+                                </p>
+                                <p>{{ job.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+{% endblock %}

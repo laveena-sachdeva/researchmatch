@@ -41,7 +41,7 @@ class Job(models.Model):
     website = models.CharField(max_length=100, default="")
     created_at = models.DateTimeField(default=timezone.now)
     filled = models.BooleanField(default=False)
-    salary = models.IntegerField(default=0, blank=True)
+    salary = models.IntegerField(default=0, null=True, blank=True)
 
     def set_user(self, user):
     	self.user  = user

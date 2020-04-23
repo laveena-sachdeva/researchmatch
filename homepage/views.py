@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from homepage.models import Job
 
 def index(request):
         return render(request,'./index.html')
@@ -20,6 +21,15 @@ def post_a_job(request):
 
 def index_professor(request):
         return render(request,'./index.html')
+
+def jobs_list_view(request):
+    alljobs= Job.objects.all()
+    context= {'alljobs': alljobs}
+    return render(request, './all_jobs.html', context)
+
+def job_details(request,job_id):
+    return HttpResponseRedirect(reverse('index'))
+
 
 @login_required
 def save_job(request):
