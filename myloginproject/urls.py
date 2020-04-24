@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url,include
 from homepage import views
+from homepage.views import *
 from myloginproject import settings
 from django.contrib.staticfiles.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -39,8 +40,8 @@ urlpatterns = [
                             url(r'^jobpost/$', views.post_a_job, name='job_form'),
                             url(r'^save_job/$', views.save_job, name='save_job'),
                             url(r'^alljobs/$', views.jobs_list_view, name='jobs_list_view'),
-                            url(r'^job_details/([0-9]*)/$',views.job_details,name='job_details'),
-
+                            # url(r'^job_details/(?P<pk>\d+)/$',JobDetailsView.as_view(),name='job_details'),
+                            path(r'^job_details/<int:id>$',JobDetailsView.as_view(),name='job_details'),
                              # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

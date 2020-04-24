@@ -18,7 +18,7 @@ class UserProfileInfoForm(forms.ModelForm):
     role = forms.ChoiceField(choices=roles, required=True )
     class Meta():
 	    model = UserProfileInfo
-	    fields = ('portfolio_site','profile_pic','role')
+	    fields = ('portfolio_site','profile_pic','role','resume')
 
 
 # from jobsapp.models import Job, Applicant
@@ -35,19 +35,19 @@ class CreateJobForm(forms.ModelForm):
             "company_description": "Company Description"
         }
 
-    # def is_valid(self):
-    #     valid = super(CreateJobForm, self).is_valid()
+    def is_valid(self):
+        valid = super(CreateJobForm, self).is_valid()
 
-    #     # if already valid, then return True
-    #     if valid:
-    #         return valid
-    #     return valid
+        # if already valid, then return True
+        if valid:
+            return valid
+        return valid
 
-    # def save(self, commit=True):
-    #     job = super(CreateJobForm, self).save(commit=False)
-    #     if commit:
-    #         job.save()
-    #     return job
+    def save(self, commit=True):
+        job = super(CreateJobForm, self).save(commit=False)
+        if commit:
+            job.save()
+        return job
 
 
 # class ApplyJobForm(forms.ModelForm):

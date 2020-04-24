@@ -15,5 +15,6 @@ handlers:
 
 env_variables:
   SETTINGS_MODE: prod
+  BUCKET_NAME: "cc-first-web-project.appspot.com"
 
 # [END django_app] 

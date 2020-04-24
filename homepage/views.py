@@ -4,10 +4,57 @@
 from django.shortcuts import render
 from homepage.forms import UserForm,UserProfileInfoForm, CreateJobForm 
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse,Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from homepage.models import Job
+from django.views.generic import ListView, DetailView, CreateView
+import os
+
+if os.getenv('GAE_APPLICATION', None):
+    from google.cloud import storage
+
+
+def upload_blob(bucket_name, source_file, destination_blob_name):
+    """Uploads a file to the bucket."""
+    # bucket_name = "your-bucket-name"
+    # source_file_name = "local/path/to/file"
+    # destination_blob_name = "storage-object-name"
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+
+    blob.upload_from_file(source_file)
+
+    print(
+        "File {} uploaded to {}.".format(
+            source_file, destination_blob_name
+        )
+    )
+
+
+class JobDetailsView(DetailView):
+    model = Job
+    template_name = 'details.html'
+    context_object_name = 'job'
+    pk_url_kwarg = 'id'
+
+    def get_object(self, queryset=None):
+        obj = super(JobDetailsView, self).get_object(queryset=queryset)
+        if obj is None:
+            raise Http404("Job doesn't exists")
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except Http404:
+            # redirect here
+            raise Http404("Job doesn't exists")
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 def index(request):
         return render(request,'./index.html')
@@ -28,7 +75,8 @@ def jobs_list_view(request):
     return render(request, './all_jobs.html', context)
 
 def job_details(request,job_id):
-    return HttpResponseRedirect(reverse('index'))
+    job = request.job
+    return render(request,'./details.html')
 
 
 @login_required
@@ -132,10 +180,25 @@ def register(request):
             profile = profile_form.save(commit=False)
             profile.user = user
             if 'profile_pic' in request.FILES:
-                # print("Checkpoint 3")
-
-                print('found it')
-                profile.profile_pic = request.FILES['profile_pic']
+                # print('found it')
+                if os.getenv('GAE_APPLICATION', None):
+                    file_obj = request.FILES['profile_pic']
+                    # print(file_obj)
+                    destination_blob_name= "profile_pics/" + user.username + "_profile_pic.jpg"
+                    bucket_name = os.environ.get("BUCKET_NAME")
+                    upload_blob(bucket_name,file_obj, destination_blob_name)
+                else:
+                    profile.profile_pic = request.FILES['profile_pic']
+            if 'resume' in request.FILES:
+                if os.getenv('GAE_APPLICATION', None):
+                    file_obj = request.FILES['resume']
+                    # print(file_obj)
+                    destination_blob_name= "resume/" + user.username + "_resume.pdf"
+                    bucket_name = os.environ.get("BUCKET_NAME")
+                    upload_blob(bucket_name,file_obj, destination_blob_name)
+                else:
+                    print("Saving locally")
+                    profile.resume = request.FILES['resume'] 
             profile.save()
             registered = True
         else:

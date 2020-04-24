@@ -1,7 +1,6 @@
 # dappx/models.py
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
 from django.utils import timezone
 
 # from accounts.models import User
@@ -17,6 +16,7 @@ class UserProfileInfo(models.Model):
     portfolio_site = models.URLField(blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
     role = models.CharField(max_length=9, choices=roles, default = "Student")
+    resume = models.FileField(upload_to='resume', blank=True)
     def __str__(self):
           return self.user.username
 
