@@ -1,6 +1,6 @@
 # dappx/forms.py
 from django import forms
-from homepage.models import UserProfileInfo, Job
+from homepage.models import UserProfileInfo, Job, Applicant
 from django.contrib.auth.models import User
 
 roles = (  
@@ -51,7 +51,8 @@ class CreateJobForm(forms.ModelForm):
         return job
 
 
-# class ApplyJobForm(forms.ModelForm):
-#     class Meta:
-#         model = Applicant
-#         fields = ('job',)
+class ApplyJobForm(forms.ModelForm):
+    class Meta:
+        model = Applicant
+        fields = ('job',)
+
