@@ -2,7 +2,11 @@
 {% block body_block %}
 <div class="container">
 	  <div class="jumbotron">
-		      <h1>Welcome to ResearchMatch !</h1>
+	          {% if user.is_authenticated %}
+		      	<h1>Welcome to ResearchMatch at {{ user.myuser.university }}</h1>
+		      {% else %}
+		       	<h1>Welcome to ResearchMatch</h1>
+		      {% endif %}
 		          {% if user.is_authenticated %}
 			          <h2>Hello {{ user.username }}</h2>
   			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
@@ -12,7 +16,7 @@
     			          <a href="{{ user.myuser.portfolio_site }} "> Portfolio </a>
     			      {% endif %}
        		          {% if user.myuser.profile_pic %}
-       		          	<img src = "{{ user.myuser.profile_pic.url }}" width = "240" />
+       		          	<img src = "{{ user.myuser.profile_pic.url }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />
 					  {% endif %}
 					  <!-- <p> The user role is {{ user.myuser.role }} </p> -->
      		          {% if user.myuser.role == "Student" %}

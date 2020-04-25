@@ -10,6 +10,18 @@ roles = (
 ('Student', 'Student'),
 )
 
+class Universities(models.Model):
+    num = models.CharField(max_length = 10, default = "")
+    name = models.CharField(max_length = 100, default = "")
+
+    def __str__(self):
+        return self.name
+
+
+all_universities = Universities.objects.all()
+all_universities = tuple((u.name,u.name) for u in all_universities)
+print(all_universities)
+
 class UserProfileInfo(models.Model):
 
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name ="myuser")
@@ -17,6 +29,7 @@ class UserProfileInfo(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
     role = models.CharField(max_length=9, choices=roles, default = "Student")
     resume = models.FileField(upload_to='resume', blank=True)
+    university = models.CharField(max_length = 100, choices = all_universities, default = 'Arizona State University--Tempe' )
     def __str__(self):
           return self.user.username
 
@@ -47,3 +60,4 @@ class Job(models.Model):
     	self.user  = user
     def __str__(self):
         return self.title
+
