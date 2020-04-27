@@ -23,12 +23,13 @@ all_universities = tuple((u.name,u.name) for u in all_universities)
 # print(all_universities)
 
 class UserProfileInfo(models.Model):
-
+    full_name = models.CharField(max_length=300,blank=True)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name ="myuser")
     portfolio_site = models.URLField(blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
     role = models.CharField(max_length=9, choices=roles, default = "Student")
     resume = models.FileField(upload_to='resume', blank=True)
+    skill_description = models.TextField()
     university = models.CharField(max_length = 100, choices = all_universities, default = 'Arizona State University--Tempe' )
     def __str__(self):
           return self.user.username
@@ -61,9 +62,16 @@ class Job(models.Model):
     def __str__(self):
         return self.title
 
+APPLICATION_STATUS = (
+    ('1', "Accept"),
+    ('2', "Reject"),
+    ('3', "In Process"),
+)
+
 class Applicant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applicants')
+    status = models.CharField(choices=APPLICATION_STATUS,max_length=10,default="In Process")
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
