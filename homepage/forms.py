@@ -19,7 +19,7 @@ class UserProfileInfoForm(forms.ModelForm):
     role = forms.ChoiceField(choices=roles, required=True )
     class Meta():
 	    model = UserProfileInfo
-	    fields = ('portfolio_site','profile_pic','role','resume','university')
+	    fields = ('full_name','portfolio_site','profile_pic','role','resume','skill_description','university')
 
 
 # from jobsapp.models import Job, Applicant
