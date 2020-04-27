@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+    {% extends 'base.html' %}
 {% load static %}
 {% load is_already_applied %}
 
@@ -33,11 +33,20 @@
                     <blockquote class="blockquote">
                         <p>{{ job.description }}</p>
                     </blockquote>
-                    <div class="job-detail__apply-bottom">
-                        {% if request.user.is_authenticated %}
-                            {% is_already_applied job request.user as is_applied %}
-                            {% if is_applied %}
-                                <input type="button" class="btn btn-outline-white-primary" value="Already applied"/>
+                    {% if role == 'Student' %}
+                        <div class="job-detail__apply-bottom">
+                            {% if request.user.is_authenticated %}
+                                {% is_already_applied job request.user as is_applied %}
+                                {% if is_applied %}
+                                    <input type="button" class="btn btn-outline-white-primary" value="Already applied"/>
+                                {% else %}
+                                    <form action="{% url 'apply-job' job.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="job" value="{{ job.id }}">
+                                        <input type="submit" class="btn btn-outline-white-primary"
+                                               value="Apply for this job"/>
+                                    </form>
+                                {% endif %}
                             {% else %}
                                 <form action="{% url 'apply-job' job.id %}" method="post">
                                     {% csrf_token %}
@@ -46,15 +55,24 @@
                                            value="Apply for this job"/>
                                 </form>
                             {% endif %}
-                        {% else %}
-                            <form action="{% url 'apply-job' job.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="job" value="{{ job.id }}">
-                                <input type="submit" class="btn btn-outline-white-primary"
-                                       value="Apply for this job"/>
-                            </form>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% elif role == 'Professor' %}
+                        <div class="applicant">
+                            <h3>Applicant List</h3>
+                            {% for application in applied_data %}
+                                <form action="{% url 'app_status' application.user_id job_id %}" method="post">
+                                    {% csrf_token %}
+                                    <label for="acceptance">{{ application.full_name }} {{application.portfolio_site}}</label>
+                                    <select id="acceptance" name="acceptance">
+                                        <option value="Accept">Accept</option>
+                                        <option value="Reject">Reject</option>
+                                        <option value="In Process">In Process</option>
+                                    </select>
+                                    <input type="submit">
+                                </form>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-3">
