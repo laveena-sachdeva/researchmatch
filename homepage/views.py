@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse,Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from homepage.models import Job, Applicant
+from homepage.models import Job, Applicant, UserProfileInfo
 from django.views.generic import ListView, DetailView, CreateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
@@ -52,11 +52,26 @@ class JobDetailsView(DetailView):
     def get(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
+            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id')
+            user_data = list()
+            for i in range(len(all_students)):
+                user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
+                user_data.append(user_info)
         except Http404:
             # redirect here
             raise Http404("Job doesn't exists")
         context = self.get_context_data(object=self.object)
+        context['applied_data'] = user_data
+        context['job_id'] = kwargs['id']
+        context['role']=UserProfileInfo.objects.get(user_id=request.user.id).role
         return self.render_to_response(context)
+        # return HttpResponse("Here's the text of the Web page.")
+
+    def post(self, request, *args, **kwargs):
+        print(kwargs)
+        to_update = Applicant.objects.filter(user_id=kwargs['user_id'],job_id=kwargs['job_id'])
+        to_update.update(status=request.POST.get("acceptance"))
+        return HttpResponse("Status Updated")
 
 class ApplyJobView(CreateView):
     model = Applicant
@@ -110,14 +125,19 @@ def index_professor(request):
         return render(request,'./index.html')
 
 def jobs_list_view(request):
-    alljobs= Job.objects.all()
-    context= {'alljobs': alljobs}
-    return render(request, './all_jobs.html', context)
+    role = UserProfileInfo.objects.get(user_id=request.user.id).role
+    if role == "Student":
+        alljobs= Job.objects.all()
+        context= {'alljobs': alljobs}
+        return render(request, './all_jobs.html', context)
+    elif role == "Professor":
+        alljobs = Job.objects.filter(user_id=request.user.id)
+        context = {'alljobs': alljobs}
+        return render(request, './all_jobs.html', context)
 
 def job_details(request,job_id):
     job = request.job
     return render(request,'./details.html')
-
 
 @login_required
 def save_job(request):
