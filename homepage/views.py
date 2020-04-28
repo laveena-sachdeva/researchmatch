@@ -61,8 +61,8 @@ class JobDetailsView(DetailView):
             for i in range(len(all_students)):
                 user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
                 user_data.append(user_info)
-            result = categorize(user_data)
-            query(result,self.object.description)
+            # result = categorize(user_data)
+            # query(result,self.object.description)
         except Http404:
             # redirect here
             raise Http404("Job doesn't exists")
