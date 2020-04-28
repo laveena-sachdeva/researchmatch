@@ -2,7 +2,7 @@
 #class HomePageView(TemplateView):
 #        template_name = 'home.html'
 from django.shortcuts import render
-# from homepage.content_classification import query, categorize
+from homepage.content_classification import query, categorize
 from homepage.forms import UserForm,UserProfileInfoForm, CreateJobForm, ApplyJobForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse,Http404
@@ -61,8 +61,8 @@ class JobDetailsView(DetailView):
             for i in range(len(all_students)):
                 user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
                 user_data.append(user_info)
-            # result = categorize(user_data)
-            # query(result,self.object.description)
+            result = categorize(user_data)
+            query(result,self.object.description)
         except Http404:
             # redirect here
             raise Http404("Job doesn't exists")
@@ -74,7 +74,6 @@ class JobDetailsView(DetailView):
         # return HttpResponse("Here's the text of the Web page.")
 
     def post(self, request, *args, **kwargs):
-        print(kwargs)
         to_update = Applicant.objects.filter(user_id=kwargs['user_id'],job_id=kwargs['job_id'])
         to_update.update(status=request.POST.get("acceptance"))
         return HttpResponse("Status Updated")
