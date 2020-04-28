@@ -2,6 +2,8 @@
 #class HomePageView(TemplateView):
 #        template_name = 'home.html'
 from django.shortcuts import render
+
+from homepage.content_classification import query, categorize
 from homepage.forms import UserForm,UserProfileInfoForm, CreateJobForm, ApplyJobForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse,Http404
@@ -37,7 +39,6 @@ def upload_blob(bucket_name, source_file, destination_blob_name):
         )
     )
 
-
 class JobDetailsView(DetailView):
     model = Job
     template_name = 'details.html'
@@ -58,6 +59,9 @@ class JobDetailsView(DetailView):
             for i in range(len(all_students)):
                 user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
                 user_data.append(user_info)
+
+            result = categorize(user_data)
+            query(result,self.object.description)
         except Http404:
             # redirect here
             raise Http404("Job doesn't exists")
