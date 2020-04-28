@@ -37,9 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'homepage'
+    'django.contrib.sites',
+    'homepage',
+    'conversation',
+    'django_libs'
 ]
 
+SITE_ID = 1
 # AUTH_PROFILE_MODULE = homepage.UserProfileInfoForm
 
 MIDDLEWARE = [
@@ -57,7 +61,7 @@ ROOT_URLCONF = 'myloginproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'conversation/templates/conversation'), os.path.join(BASE_DIR, 'django_libs/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,19 +80,19 @@ WSGI_APPLICATION = 'myloginproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/cc-first-web-project:us-east1:cc-first-web-app-instance2',
-            'USER': 'laveena2',
-            'PASSWORD': 'laveena2',
-            'NAME': 'researchmatch2',
-        }
-}
+# DATABASES = {
+#     'sqlite': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     },
+#     'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'HOST': '/cloudsql/cc-first-web-project:us-east1:cc-first-web-app-instance2',
+#             'USER': 'laveena2',
+#             'PASSWORD': 'laveena2',
+#             'NAME': 'researchmatch2',
+#         }
+# }
 # [START db_setup]
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google Cloud SQL using

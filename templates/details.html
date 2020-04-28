@@ -62,7 +62,7 @@
                             {% for application in applied_data %}
                                 <form action="{% url 'app_status' application.user_id job_id %}" method="post">
                                     {% csrf_token %}
-                                    <label for="acceptance">{{ application.full_name }} {{application.portfolio_site}}</label>
+                                    <label for="acceptance"> <a href="/conversation/create/{{ application.user_id }}/"> {{ application.full_name }} {{application.portfolio_site}} </a> </label>
                                     <select id="acceptance" name="acceptance">
                                         <option value="Accept">Accept</option>
                                         <option value="Reject">Reject</option>

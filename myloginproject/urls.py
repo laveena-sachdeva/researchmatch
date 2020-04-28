@@ -40,11 +40,15 @@ urlpatterns = [
                             url(r'^jobpost/$', views.post_a_job, name='job_form'),
                             url(r'^save_job/$', views.save_job, name='save_job'),
                             url(r'^alljobs/$', views.jobs_list_view, name='jobs_list_view'),
-                            # url(r'^job_details/(?P<pk>\d+)/$',JobDetailsView.as_view(),name='job_details'),
                             path(r'^job_details/<int:id>$',JobDetailsView.as_view(),name='job_details'),
                             path(r'^job_details/<int:user_id>/<int:job_id>$',JobDetailsView.as_view(),name='app_status'),
                             path('apply-job/<int:job_id>', ApplyJobView.as_view(), name='apply-job'),
                             # path('applicationstatus/<int:user_id>/<int:job_id>', JobDetailsView.as_view(), name='app_status'),
                              # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
+                            url(r'conversation/', include('conversation.urls')),
+                            url(r'^see_conversations/(\d+)/$', views.see_conversations, name='see_conversations'),
+                            url(r'^conversation_form/$', views.conversation_form, name='conversation_form'),
+                            url(r'^all_people/$', views.all_people, name='all_people'),
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

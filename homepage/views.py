@@ -12,6 +12,7 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib import messages
+from conversation.models import Conversation, Message
 import os
 
 if os.getenv('GAE_APPLICATION', None):
@@ -173,39 +174,6 @@ def save_job(request):
             print("The form is invalid")
     return HttpResponseRedirect(reverse('index'))
 
-# registered = False
-#     if request.method == 'POST':
-#         # print("Checkpoint 1")
-#         user_form = UserForm(data=request.POST)
-#         profile_form = UserProfileInfoForm(data=request.POST)
-#         if user_form.is_valid() and profile_form.is_valid():
-#             # print("Checkpoint 2")
-
-#             user = user_form.save()
-#             user.set_password(user.password)
-#             user.save()
-#             profile = profile_form.save(commit=False)
-#             profile.user = user
-#             if 'profile_pic' in request.FILES:
-#                 # print("Checkpoint 3")
-
-#                 print('found it')
-#                 profile.profile_pic = request.FILES['profile_pic']
-#             profile.save()
-#             registered = True
-#         else:
-#             # print("Checkpoint 4")
-
-#             print(user_form.errors,profile_form.errors)
-#     else:
-#         # print("Checkpoint 5")
-
-#         user_form = UserForm()
-#         profile_form = UserProfileInfoForm()
-#     return render(request,'./registration.html', {'user_form':user_form, 'profile_form':profile_form,'registered':registered})
-#     # print("Checkpoint 6")
-
-
 @login_required
 def special(request):
         return HttpResponse("You are logged in !")
@@ -301,3 +269,23 @@ def user_login(request):
             return HttpResponse("Invalid login details given")
     else:
         return render(request, './login.html', {})                                
+
+@login_required
+def see_conversations(request,my_id):
+    # allusers = User.objects.get(id=my_id)
+    # c = allusers.conversations.all()
+    # print("printing c")
+    # print(c)
+    all_convos = Conversation.objects.all()
+    context = {'conversations':all_convos}
+    return render(request,'./conversation_list.html',context)
+
+@login_required
+def conversation_form(request):
+    return render(request,'./conversation_form.html')
+
+@login_required
+def all_people(request):
+    allpeople= User.objects.all()
+    context= {'allusers': allpeople}
+    return render(request, './people.html', context)

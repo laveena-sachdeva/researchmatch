@@ -1,0 +1,41 @@
+{% extends "conversation_base.html" %}
+{% load conversation_tags %}
+{% load i18n %}
+
+{% block head_title %}
+    {% chain_user_names object.users.all request.user as user_names %}
+    {% if object.pk %}{{ user_names }}{% else %} New conversation{% endif %}
+{% endblock %}
+
+{% block body_block %}
+{% if object.pk %}
+    {% chain_user_names object.users.all request.user 200 as user_names %}
+
+    <h3 style="margin-top: 0px;">{{ user_names }}</h3>
+{% endif %}
+<ul id="conversation-messages" class="list-group">
+    {% for message in object.messages.all %}
+        <li class="list-group-item">
+            <strong>{{ message.user }}</strong>
+            <small class="pull-right text-muted">{{ message.date|date:"SHORT_DATETIME_FORMAT" }}</small>
+            <div class="clearfix"></div>
+            {{ message.text|linebreaks }}
+            {% if message.attachment %}
+                <a href="{{ message.attachment.url }}" target="_blank"><span class="glyphicon glyphicon-file"></span> {{ message.filename }}</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+{% if form.blocked_users %}
+    <p class="alert alert-danger">{% trans "This conversation has been blocked." %}</p>
+{% else %}
+    <form method="post" action="." enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            {% include "django_libs/partials/form_field.html" with hide_label=1 %}
+        {% endfor %}
+        <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
+    </form>
+{% endif %}
+{% endblock %}

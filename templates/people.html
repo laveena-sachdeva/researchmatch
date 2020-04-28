@@ -1,0 +1,12 @@
+{% extends "./base.html" %}
+{% block body_block %}
+<div class="container">
+          <p> Are we here?</p>
+	          {% for user in allusers %}
+		         <div>
+                  <a href="/conversation/create/{{ user.id }}/">{{ user.username }}</a>
+              </div>
+          {% endfor %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n conversation_tags %}
+{% if digest %}
+  <p>{% blocktrans %}There are some messages you haven't noticed yet.{% endblocktrans %}</p>
+{% endif %}
+
+{% block body_block %}
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	{% for conversation in conversations %}
+    {% get_last_message conversation as message %}
+		<tr>
+			<td width="30%" style="padding-right: 30px;">
+				<a href="{{ protocol }}{{ domain }}{% url "conversation_update" pk=conversation.pk %}">
+					<!-- <strong>{{ message.user }}</strong> -->
+					<strong>{% get_other_user conversation request.user%}</strong>
+				</a>
+			</td>
+			<td align="left" style="color: #333333; font-family: Georgia, 'Times New Roman', Times, serif; font-size: 14px; vertical-align: top;" width="70%">
+				<small>{{ message.date|date:"SHORT_DATETIME_FORMAT" }}</small>
+				<p style="font-size: 18px; margin: 0 0 5px 0; padding: 0;">{{ message.text|truncatewords:10|linebreaks }}</p>
+			</td>
+		</tr>
+	{% endfor %}
+</table>
+{% endblock %}

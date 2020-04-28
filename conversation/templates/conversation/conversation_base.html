@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load conversation_tags %}
+{% block head_title %}
+My conversations
+{% endblock %}
+{% block body_block %}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">My conversations</h4>
+            </div>
+            {% if conversations %}
+                <div class="list-group">
+                    {% for date, conversation in conversations.iteritems %}
+                        {% if not request.user in conversation.archived_by.all %}
+                            <a class="list-group-item conversation-link{% if conversation == object %} active{% endif %}{% if request.user in conversation.unread_by.all %} unread{% endif %}" href="{% url "conversation_update" pk=conversation.pk %}">
+                                {% chain_user_names conversation.users.all request.user as user_names %}{{ user_names }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-8">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}
