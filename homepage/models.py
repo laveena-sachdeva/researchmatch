@@ -29,7 +29,7 @@ class UserProfileInfo(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
     role = models.CharField(max_length=9, choices=roles, default = "Student")
     resume = models.FileField(upload_to='resume', blank=True)
-    skill_description = models.TextField()
+    skill_description = models.TextField(default="")
     university = models.CharField(max_length = 100, choices = all_universities, default = 'Arizona State University--Tempe' )
     def __str__(self):
           return self.user.username

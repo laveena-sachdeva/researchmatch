@@ -63,4 +63,4 @@ class MessageForm(forms.ModelForm):
 
     class Meta:
         model = models.Message
-        fields = ('text', 'attachment')
+        fields = ('text',)

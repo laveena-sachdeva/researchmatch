@@ -95,11 +95,11 @@ class Message(models.Model):
         verbose_name=_('Text'),
     )
 
-    attachment = models.FileField(
-        upload_to='conversation_messages',
-        verbose_name=_('Attachment'),
-        blank=True, null=True,
-    )
+    # attachment = models.FileField(
+    #     upload_to='conversation_messages',
+    #     verbose_name=_('Attachment'),
+    #     blank=True, null=True,
+    # )
 
     class Meta:
         ordering = ('-date', )

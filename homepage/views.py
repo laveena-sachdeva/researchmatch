@@ -2,7 +2,7 @@
 #class HomePageView(TemplateView):
 #        template_name = 'home.html'
 from django.shortcuts import render
-from homepage.content_classification import query, categorize
+# from homepage.content_classification import query, categorize
 from homepage.forms import UserForm,UserProfileInfoForm, CreateJobForm, ApplyJobForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse,Http404
