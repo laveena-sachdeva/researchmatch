@@ -164,6 +164,13 @@ def jobs_list_view(request):
         context = {'alljobs': alljobs}
         return render(request, './all_jobs.html', context)
 
+
+def applied_jobs_view(request):
+    # alljobs = Jobs.objects.filter(applicant__jobid )
+    allapplications = Applicant.objects.filter(user_id=request.user.id)
+    context = {'alljobs': allapplications, 'applied':True}
+    return render(request, './all_applied_jobs.html', context)
+
 def job_details(request,job_id):
     job = request.job
     return render(request,'./details.html')

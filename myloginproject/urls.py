@@ -40,6 +40,8 @@ urlpatterns = [
                             url(r'^jobpost/$', views.post_a_job, name='job_form'),
                             url(r'^save_job/$', views.save_job, name='save_job'),
                             url(r'^alljobs/$', views.jobs_list_view, name='jobs_list_view'),
+                            url(r'^appliedjobs/$', views.applied_jobs_view, name='applied_jobs_view'),
+
                             path(r'^job_details/<int:id>$',JobDetailsView.as_view(),name='job_details'),
                             path(r'^job_details/<int:user_id>/<int:job_id>$',JobDetailsView.as_view(),name='app_status'),
                             path('apply-job/<int:job_id>', ApplyJobView.as_view(), name='apply-job'),
