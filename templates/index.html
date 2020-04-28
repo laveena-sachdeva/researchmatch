@@ -20,10 +20,18 @@
 					  {% endif %}
 					  <!-- <p> The user role is {{ user.myuser.role }} </p> -->
      		          {% if user.myuser.role == "Student" %}
-       		          	<h5> <a href = '/alljobs/' >See all jobs </a> </h5>
+		  				{% if alljobs|length %}
+       		          		<h5> <a href = '/alljobs/' >See all jobs </a> </h5>
+		  				{% else %}
+		  					<h5>No jobs posted</h5>
+		  				{% endif %}
        		          {% else %}
        		          	<h5> <a href = '/jobpost/' >Post a job </a> </h5>
-		  				<h5> <a href = '/alljobs/' >See posted jobs </a> </h5>
+		  				{% if alljobs|length %}
+		  					<h5> <a href = '/alljobs/' >See posted jobs </a> </h5>
+		  				{% else %}
+		  					<h5>No jobs posted</h5>
+		  				{% endif %}
 					  {% endif %}
        		          <a href = "{% url 'see_conversations' user.id %}"> See all conversations </a>
        		          <br/>       		          

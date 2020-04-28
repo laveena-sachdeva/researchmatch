@@ -56,13 +56,13 @@ class JobDetailsView(DetailView):
     def get(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
-            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id')
+            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id','status')
             user_data = list()
             for i in range(len(all_students)):
                 user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
-                user_data.append(user_info)
+                user_data.append((user_info,all_students[i]['status']))
             result = categorize(user_data)
-            query(result,self.object.description)
+            user_data = query(result,self.object.description)
         except Http404:
             # redirect here
             raise Http404("Job doesn't exists")
@@ -71,12 +71,16 @@ class JobDetailsView(DetailView):
         context['job_id'] = kwargs['id']
         context['role']=UserProfileInfo.objects.get(user_id=request.user.id).role
         return self.render_to_response(context)
-        # return HttpResponse("Here's the text of the Web page.")
+
+    def get_success_url(self):
+        return reverse_lazy('job_details', kwargs={'id': self.kwargs['job_id']})
 
     def post(self, request, *args, **kwargs):
         to_update = Applicant.objects.filter(user_id=kwargs['user_id'],job_id=kwargs['job_id'])
         to_update.update(status=request.POST.get("acceptance"))
-        return HttpResponse("Status Updated")
+        # return HttpResponse("Status updated")
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class ApplyJobView(CreateView):
     model = Applicant

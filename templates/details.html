@@ -64,19 +64,27 @@
                                                value="Delete this job"/>
                         </form>
                         <div class="applicant">
-                            <h3>Applicant List</h3>
-                            {% for application in applied_data %}
-                                <form action="{% url 'app_status' application.user_id job_id %}" method="post">
-                                    {% csrf_token %}
-                                    <label for="acceptance"> <a href="/conversation/create/{{ application.user_id }}/"> {{ application.full_name }} {{application.portfolio_site}} </a> </label>
-                                    <select id="acceptance" name="acceptance">
-                                        <option value="Accept">Accept</option>
-                                        <option value="Reject">Reject</option>
-                                        <option value="In Process">In Process</option>
-                                    </select>
-                                    <input type="submit">
-                                </form>
-                            {% endfor %}
+                            {% if applied_data|length %}
+                                <h3>Applicant List</h3>
+                                {% for application in applied_data %}
+                                    {% if application.1 == 'In Process' %}
+                                        <form action="{% url 'app_status' application.0.user_id job_id %}" method="post">
+                                            {% csrf_token %}
+                                            <label for="acceptance"> <a href="/conversation/create/{{ application.0.user_id }}/"> {{ application.0.full_name }} {{application.0.portfolio_site}} </a> </label>
+                                            <select id="acceptance" name="acceptance">
+                                                <option value="In Process">In Process</option>
+                                                <option value="Accept">Accept</option>
+                                                <option value="Reject">Reject</option>
+                                            </select>
+                                            <input type="submit" value="OK">
+                                        </form>
+                                    {% else %}
+                                        <a href="/conversation/create/{{ application.0.user_id }}/"> {{ application.0.full_name }} {{application.0.portfolio_site}} </a>{{application.1}}<br/>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <h3>No Applicants Matching the Criteria</h3>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>

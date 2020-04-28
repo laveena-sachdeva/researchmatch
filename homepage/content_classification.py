@@ -71,11 +71,11 @@ def categorize(applicant_list):
     result = {}
     for entry in applicant_list:
         try:
-            categories = classify(entry.skill_description, verbose=False)
+            categories = classify(entry[0].skill_description, verbose=False)
 
-            result[entry] = categories
+            result[entry[0]] = {'categories':categories,'status':entry[1]}
         except Exception:
-            print('Failed to process {}'.format(entry))
+            print('Failed to process {}'.format(entry[0]))
 
     return result
 # [END language_classify_text_tutorial_index]
@@ -139,26 +139,21 @@ def query(index,text):
     query_categories = classify(text, verbose=False)
     print(query_categories)
     similarities = []
-    for filename, categories in six.iteritems(index):
-        similarities.append(
-            (filename, similarity(query_categories, categories)))
+    for filename, entry in six.iteritems(index):
+        sim = similarity(query_categories, entry['categories'])
+        if sim > 0.3:
+            similarities.append((filename,entry['status'],sim))
 
-    similarities = sorted(similarities, key=lambda p: p[1], reverse=True)
+    similarities = sorted(similarities, key=lambda p: p[2], reverse=True)
 
     print('=' * 20)
     print('Query: {}\n'.format(text))
     for category, confidence in six.iteritems(query_categories):
         print('\tCategory: {}, confidence: {}'.format(category, confidence))
     print('\nMost similar indexed texts:')
-    for filename, sim in similarities:
-        # if sim > 0.3:
+    for filename, status, sim in similarities:
         print('\tFilename: {}'.format(filename))
         print('\tSimilarity: {}'.format(sim))
         print('\n')
-
     return similarities
 # [END language_classify_text_tutorial_query]
-
-
-if __name__ == '__main__':
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/home/ubuntu/Documents/ASU_classwork/sem2/CC/proj2/cc-first-web-project-41851f0b5745.json"
