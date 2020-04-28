@@ -43,6 +43,8 @@ urlpatterns = [
                             path(r'^job_details/<int:id>$',JobDetailsView.as_view(),name='job_details'),
                             path(r'^job_details/<int:user_id>/<int:job_id>$',JobDetailsView.as_view(),name='app_status'),
                             path('apply-job/<int:job_id>', ApplyJobView.as_view(), name='apply-job'),
+                            path('delete-job/<int:job_id>', views.delete_job, name='delete-job'),
+
                             # path('applicationstatus/<int:user_id>/<int:job_id>', JobDetailsView.as_view(), name='app_status'),
                              # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
                             url(r'conversation/', include('conversation.urls')),

@@ -57,6 +57,12 @@
                             {% endif %}
                         </div>
                     {% elif role == 'Professor' %}
+                        <form action="{% url 'delete-job' job.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="job" value="{{ job.id }}">
+                                        <input type="submit" class="btn btn-outline-white-primary"
+                                               value="Delete this job"/>
+                        </form>
                         <div class="applicant">
                             <h3>Applicant List</h3>
                             {% for application in applied_data %}

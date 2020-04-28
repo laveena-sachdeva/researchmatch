@@ -2,7 +2,6 @@
 #class HomePageView(TemplateView):
 #        template_name = 'home.html'
 from django.shortcuts import render
-
 from homepage.content_classification import query, categorize
 from homepage.forms import UserForm,UserProfileInfoForm, CreateJobForm, ApplyJobForm
 from django.contrib.auth import authenticate, login, logout
@@ -15,6 +14,8 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib import messages
 from conversation.models import Conversation, Message
+from django.contrib.auth.models import User
+
 import os
 
 if os.getenv('GAE_APPLICATION', None):
@@ -39,6 +40,7 @@ def upload_blob(bucket_name, source_file, destination_blob_name):
         )
     )
 
+
 class JobDetailsView(DetailView):
     model = Job
     template_name = 'details.html'
@@ -59,7 +61,6 @@ class JobDetailsView(DetailView):
             for i in range(len(all_students)):
                 user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
                 user_data.append(user_info)
-
             result = categorize(user_data)
             query(result,self.object.description)
         except Http404:
@@ -115,6 +116,12 @@ class ApplyJobView(CreateView):
         form.instance.user = self.request.user
         form.save()
         return super().form_valid(form)
+
+@login_required
+def delete_job(request, job_id):
+    to_update = Job.objects.filter(id=job_id)
+    to_update.delete()
+    return HttpResponseRedirect(reverse('jobs_list_view'))
 
 def index(request):
         return render(request,'./index.html')
@@ -276,12 +283,13 @@ def user_login(request):
 
 @login_required
 def see_conversations(request,my_id):
-    # allusers = User.objects.get(id=my_id)
-    # c = allusers.conversations.all()
-    # print("printing c")
-    # print(c)
-    all_convos = Conversation.objects.all()
-    context = {'conversations':all_convos}
+    allusers = User.objects.get(id=my_id)
+    context = {}
+    if allusers:
+        c = allusers.conversations.all()
+        if c:
+            context = {'conversations':c}
+
     return render(request,'./conversation_list.html',context)
 
 @login_required
