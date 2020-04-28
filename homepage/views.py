@@ -127,17 +127,29 @@ def delete_job(request, job_id):
     return HttpResponseRedirect(reverse('jobs_list_view'))
 
 def index(request):
-        return render(request,'./index.html')
+    try:
+        role = UserProfileInfo.objects.get(user_id=request.user.id).role
+        if role == "Student":
+            alljobs= Job.objects.all()
+            context= {'alljobs': alljobs}
+            return render(request, './index.html', context)
+        elif role == "Professor":
+            alljobs = Job.objects.filter(user_id=request.user.id)
+            context = {'alljobs': alljobs}
+            return render(request, './index.html', context)
+    except:
+        return render(request, './index.html')
+
 
 def index_student(request):
-        return render(request,'./index.html')
+        return HttpResponseRedirect(reverse(index))
 
 @login_required
 def post_a_job(request):
         return render(request,'./jobpost.html')
 
 def index_professor(request):
-        return render(request,'./index.html')
+        return HttpResponseRedirect(reverse(index))
 
 def jobs_list_view(request):
     role = UserProfileInfo.objects.get(user_id=request.user.id).role
