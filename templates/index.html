@@ -11,9 +11,9 @@
 			          <h2>Hello {{ user.username }}</h2>
   			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
 
-     		          {% if user.myuser.portfolio_site %}
+     		          {% if user.myuser.linkedin_url %}
     			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
-    			          <a href="{{ user.myuser.portfolio_site }} "> Portfolio </a>
+    			          <a href="{{ user.myuser.linkedin_url }} "> Linkedin </a>
     			      {% endif %}
        		          {% if user.myuser.profile_pic %}
        		          	<img src = "{{ user.myuser.profile_pic.url }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />

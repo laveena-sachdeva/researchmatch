@@ -288,7 +288,7 @@ def user_login(request):
                 login(request,user)
                 form1 = UserProfileInfoForm(request.POST)
                 if form1.is_valid():
-                    portfolio_site = form1.cleaned_data['portfolio_site']
+                    linkedin_url = form1.cleaned_data['linkedin_url']
                     role = form1.cleaned_data['role']
                     if role == 'Student':
                         return HttpResponseRedirect(reverse('index_student'))
