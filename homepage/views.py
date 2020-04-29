@@ -15,7 +15,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from conversation.models import Conversation, Message
 from django.contrib.auth.models import User
-
+from datetime import date
 import os
 
 if os.getenv('GAE_APPLICATION', None):
@@ -174,6 +174,12 @@ def applied_jobs_view(request):
 def job_details(request,job_id):
     job = request.job
     return render(request,'./details.html')
+
+def delete_invalid_jobs(request):
+    to_update = Job.objects.filter(last_date__date__lt=date.today())
+    print(to_update)
+    to_update.delete()
+    return HttpResponse(status=204)
 
 @login_required
 def save_job(request):
