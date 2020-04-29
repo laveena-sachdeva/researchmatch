@@ -231,6 +231,9 @@ def display_image(request, img):
     
 
 def register(request):
+    if request.user:
+        if request.user.is_authenticated:
+            user_logout(request)
     registered = False
     if request.method == 'POST':
         # print("Checkpoint 1")
