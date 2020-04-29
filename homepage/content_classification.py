@@ -21,20 +21,16 @@ https://cloud.google.com/natural-language/docs/classify-text-tutorial.
 """
 
 # [START language_classify_text_tutorial_imports]
-import argparse
-import os
-
 from google.cloud import language
 import numpy
-import six
+import six,os
 # [END language_classify_text_tutorial_imports]
-from google.oauth2 import service_account
-
 # [START language_classify_text_tutorial_classify]
 
 def classify(text, verbose=True):
     """Classify the input text into categories. """
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:/Users/lavee/Documents/Semester_4/cc/project/project2/gae_deploy2/researchmatch/cc-first-web-project-41851f0b5745.json"
+    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:/Users/lavee/Documents/Semester_4/cc/project/project2/gae_deploy2/researchmatch/cc-first-web-project-41851f0b5745.json"
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/home/ubuntu/Documents/ASU_classwork/sem2/CC/proj2/cc-first-web-project-41851f0b5745.json"
     language_client = language.LanguageServiceClient()
 
     document = language.types.Document(

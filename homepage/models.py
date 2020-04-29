@@ -25,7 +25,7 @@ all_universities = tuple((u.name,u.name) for u in all_universities)
 class UserProfileInfo(models.Model):
     full_name = models.CharField(max_length=300,blank=True)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name ="myuser")
-    portfolio_site = models.URLField(blank=True)
+    linkedin_url = models.URLField(blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
     role = models.CharField(max_length=9, choices=roles, default = "Student")
     resume = models.FileField(upload_to='resume', blank=True)
