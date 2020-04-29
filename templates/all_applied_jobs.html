@@ -9,7 +9,7 @@
         <div class="container">
             <h3 class="heading">Currently Applied Jobs</h3>
                 <div class="row featured align-items-stretch">
-                    {% for job in alljobs %}
+                    {% for j in alljobs %}
                         <div class="col-lg-4 mb-5 mb-lg-0">
                             <div class="box-image-text bg-visible full-height">
                                 <div class="top">
@@ -27,20 +27,20 @@
                                 <div class="content">
                                     <!-- <p> The job id is {{ job.id }}</p> -->
                                     <!-- <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5>                                 -->
-                                    <h5><a href ="{% url 'job_details' job.id %}"> {{ job.job.title }}</a></h5>                                                                
+                                    <h5><a href ="{% url 'job_details' j.job.id %}"> {{ j.job.title }}</a></h5>                                                                
                                     <p class="featured__details"><i class="fa fa-map-marker job__location"></i>
-                                        {{ job.job.location }}
-                                        {% if job.job.type == '1' %}
+                                        {{ j.job.location }}
+                                        {% if j.job.type == '1' %}
                                             <span class="badge featured-badge badge-success">Full time</span>
-                                        {% elif job.job.type == '2' %}
+                                        {% elif j.job.type == '2' %}
                                             <span class="badge featured-badge badge-primary">Part time</span>
                                         {% else %}
                                             <span style="color: #ffffff;" class="badge featured-badge badge-warning">Internship</span>
                                         {% endif %}
                                     </p>
-                                    <p>{{ job.job.description }}</p>
+                                    <p>{{ j.job.description }}</p>
                                     {% if applied %}
-                                         <p>Application Status : {{ job.status }}</p>
+                                         <p>Application Status : {{ j.status }}</p>
                                     {% endif %}
                                 </div>
                             </div>
