@@ -8,6 +8,7 @@
 
         <div class="container">
             <h3 class="heading">Currently Applied Jobs</h3>
+            {% if alljobs %}
                 <div class="row featured align-items-stretch">
                     {% for j in alljobs %}
                         <div class="col-lg-4 mb-5 mb-lg-0">
@@ -47,6 +48,9 @@
                         </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p> You have not applied for any jobs yet. </p>
+                {% endif %}
         </div>
 
 {% endblock %}
