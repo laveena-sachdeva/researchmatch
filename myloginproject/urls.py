@@ -49,7 +49,7 @@ urlpatterns = [
                              # url(r'^media/profile_pics/(.*.jpeg)$', views.display_image, name='display_image'),
                             url(r'conversation/', include('conversation.urls')),
                             url(r'^see_conversations/(\d+)/$', views.see_conversations, name='see_conversations'),
-                            url(r'^conversation_form/$', views.conversation_form, name='conversation_form'),
+                            # url(r'^conversation_form/$', views.conversation_form, name='conversation_form'),
                             url(r'^all_people/$', views.all_people, name='all_people'),
 
 ]

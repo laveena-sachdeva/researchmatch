@@ -164,16 +164,16 @@ def jobs_list_view(request):
         context = {'alljobs': alljobs}
         return render(request, './all_jobs.html', context)
 
-
+def job_details(request,job_id):
+    job = request.job
+    return render(request,'./details.html')
+    
 def applied_jobs_view(request):
-    # alljobs = Jobs.objects.filter(applicant__jobid )
     allapplications = Applicant.objects.filter(user_id=request.user.id)
     context = {'alljobs': allapplications, 'applied':True}
     return render(request, './all_applied_jobs.html', context)
 
-def job_details(request,job_id):
-    job = request.job
-    return render(request,'./details.html')
+
 
 @login_required
 def save_job(request):
@@ -315,10 +315,6 @@ def see_conversations(request,my_id):
             context = {'conversations':c}
 
     return render(request,'./conversation_list.html',context)
-
-@login_required
-def conversation_form(request):
-    return render(request,'./conversation_form.html')
 
 @login_required
 def all_people(request):
