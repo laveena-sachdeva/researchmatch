@@ -10,15 +10,7 @@
 		          {% if user.is_authenticated %}
 			          <h2>Hello {{ user.myuser.full_name }}</h2>
   			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
-
-     		          {% if user.myuser.linkedin_url %}
-    			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
-    			          <a href="{{ user.myuser.linkedin_url }} "> Linkedin </a>
-    			      {% endif %}
-       		          {% if user.myuser.profile_pic %}
-       		          	<img src = "{{ user.myuser.profile_pic.url }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />
-					  {% endif %}
-					  <!-- <p> The user role is {{ user.myuser.role }} </p> -->
+  			          <a href = '/view_profile/{{user.id}}'> Visit Profile </a>
      		          {% if user.myuser.role == "Student" %}
 		  				{% if alljobs|length %}
        		          		<h5> <a href = '/alljobs/' >See all jobs </a> </h5>

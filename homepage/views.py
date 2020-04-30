@@ -338,3 +338,18 @@ def all_people(request):
     allpeople= User.objects.all()
     context= {'allusers': allpeople}
     return render(request, './people.html', context)
+
+@login_required
+def view_profile(request, user_id):
+    allinfo = User.objects.get(id = user_id)
+    ctx = {'allinfo':allinfo}
+
+    if os.getenv('GAE_APPLICATION', None):
+        bucket_name = os.environ.get("BUCKET_NAME")
+        resume_link = bucket_name + "/resume/" + allinfo.username + "_resume.pdf"
+        profile_link = bucket_name + "/profile_pics" + allinfo.username + "_profile_pic.jpg"
+        ctx['resume_link'] = resume_link
+        ctx['profile_link'] = profile_link
+
+    return render(request, './profile.html', ctx)
+
