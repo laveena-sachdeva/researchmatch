@@ -6,8 +6,8 @@
     {% chain_user_names object.users.all request.user as user_names %}
     {% if object.pk %}{{ user_names }}{% else %} New conversation{% endif %}
 {% endblock %}
-
 {% block body_block %}
+<a href = "{% url 'see_conversations' request.user.id %}"> Go Back to All Conversations </a>
 {% if object.pk %}
     {% chain_user_names object.users.all request.user 200 as user_names %}
     <h3 style="margin-top: 0px;">{{ user_names }}</h3>
