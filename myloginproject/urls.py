@@ -51,6 +51,8 @@ urlpatterns = [
                             url(r'^see_conversations/(\d+)/$', views.see_conversations, name='see_conversations'),
                             # url(r'^conversation_form/$', views.conversation_form, name='conversation_form'),
                             url(r'^all_people/$', views.all_people, name='all_people'),
+                            path(r'view_profile/<int:user_id>', views.view_profile, name='view_profile'),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
