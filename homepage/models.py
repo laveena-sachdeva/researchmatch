@@ -23,7 +23,7 @@ all_universities = tuple((u.name,u.name) for u in all_universities)
 # print(all_universities)
 
 class UserProfileInfo(models.Model):
-    full_name = models.CharField(max_length=300,blank=True)
+    full_name = models.CharField(max_length=300, blank = False)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name ="myuser")
     linkedin_url = models.URLField(blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
