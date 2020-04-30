@@ -36,6 +36,7 @@ class ConversationViewMixin(AjaxResponseMixin):
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super(ConversationViewMixin, self).get_form_kwargs(
             *args, **kwargs)
+
         kwargs.update({
             'user': self.user,
             'conversation': self.object,
@@ -43,9 +44,11 @@ class ConversationViewMixin(AjaxResponseMixin):
             'initial_user': self.initial_user if hasattr(
                 self, 'initial_user') else None,
         })
+
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self,**kwargs):
+
         ctx = super(ConversationViewMixin, self).get_context_data(**kwargs)
         conversations = {}
         for conversation in Conversation.objects.filter(
@@ -61,7 +64,8 @@ class ConversationViewMixin(AjaxResponseMixin):
         ctx.update({
             'conversations': collections.OrderedDict(
                 reversed(sorted(conversations.items()))),
-        })
+            'initial_user':self.initial_user if hasattr(
+                self, 'initial_user') else None})
         return ctx
 
     def get_success_url(self):
@@ -113,7 +117,9 @@ class ConversationCreateView(ConversationViewMixin, CreateView):
     """View to start a new conversation."""
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+
         self.user = request.user
+
         try:
             self.initial_user = get_user_model().objects.get(
                 pk=kwargs['user_pk'])
@@ -126,7 +132,7 @@ class ConversationCreateView(ConversationViewMixin, CreateView):
             return HttpResponseRedirect(reverse(
                 'conversation_update', kwargs={'pk': conversations[0].pk}))
         return super(ConversationCreateView, self).dispatch(
-            request, *args, **kwargs)
+            request, {'pk': kwargs['user_pk']},  kwargs={'pk': kwargs['user_pk']})
 
 
 class ConversationListView(TemplateView):
