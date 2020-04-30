@@ -29,11 +29,11 @@ class CreateJobForm(forms.ModelForm):
     class Meta:
         model = Job
         exclude = ('user', 'created_at',)
-        # fields = ('user','title','description','location','type','category','last_date','company_name','company_description','website','created_at','filled','salary')
+        # fields = ('user','title','description','location','type','category','last_date','workplace_name','workplace_description','website','created_at','filled','salary')
         labels = {
             "last_date": "Last Date",
-            "company_name": "Company Name",
-            "company_description": "Company Description"
+            "workplace_name": "Workplace Name",
+            "workplace_description": "Workplace Description"
         }
 
     def is_valid(self):
