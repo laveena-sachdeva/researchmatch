@@ -65,14 +65,18 @@ class JobDetailsView(DetailView):
             user_data = list()
             for i in range(len(all_students)):
                 user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
-                user_data.append((user_info, all_students[i]['status']))
-            print("Categorizing data")
-            result = categorize(user_data)
-            user_data = query(result, self.object.description)
-            context['applied_data'] = user_data
+                user_data.append((user_info, all_students[i]['status'],0))
+            try:
+                print("Categorizing data")
+                result = categorize(user_data)
+                user_data = query(result, self.object.description)
+                context['applied_data'] = user_data
+            except:
+                context['applied_data'] = user_data
         else:
             status = Applicant.objects.filter(job_id=kwargs['id'], user_id=request.user.id).values('status')
-            context['status'] = status[0]['status']
+            if status:
+                context['status'] = status[0]['status']
         context['role'] = UserProfileInfo.objects.get(user_id=request.user.id).role
         return self.render_to_response(context)
 
