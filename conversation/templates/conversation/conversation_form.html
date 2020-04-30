@@ -13,10 +13,18 @@
 
     <h3 style="margin-top: 0px;">{{ user_names }}</h3>
 {% endif %}
+{% for n in object.users.all %}
+    {% if n.myuser.full_name == request.user.myuser.full_name %}
+    <p></p>
+    {% else %}
+    <p> Your conversation with {{n.myuser.full_name}} </p>
+    {% endif %}
+{% endfor %}
+
 <ul id="conversation-messages" class="list-group">
     {% for message in object.messages.all %}
         <li class="list-group-item">
-            <strong>{{ message.user }}</strong>
+            <strong>{{ message.user.myuser.full_name }}</strong>
             <small class="pull-right text-muted">{{ message.date|date:"SHORT_DATETIME_FORMAT" }}</small>
             <div class="clearfix"></div>
             {{ message.text|linebreaks }}

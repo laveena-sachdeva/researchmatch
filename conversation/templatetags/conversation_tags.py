@@ -38,6 +38,6 @@ def get_last_message(conversation):
 @register.simple_tag(name='get_other_user')
 def get_other_user(conversation,exclude_user):
     try:
-        return conversation.users.exclude(pk=exclude_user.pk)[0].username
+        return conversation.users.exclude(pk=exclude_user.pk)[0].myuser.full_name + ", " + conversation.users.exclude(pk=exclude_user.pk)[0].username
     except:
         return None

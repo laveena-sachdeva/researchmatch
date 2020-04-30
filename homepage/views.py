@@ -164,16 +164,18 @@ def jobs_list_view(request):
         context = {'alljobs': alljobs}
         return render(request, './all_jobs.html', context)
 
-
-def applied_jobs_view(request):
-    # alljobs = Jobs.objects.filter(applicant__jobid )
-    allapplications = Applicant.objects.filter(user_id=request.user.id)
-    context = {'alljobs': allapplications, 'applied':True}
-    return render(request, './all_applied_jobs.html', context)
-
 def job_details(request,job_id):
     job = request.job
     return render(request,'./details.html')
+
+def applied_jobs_view(request):
+    allapplications = Applicant.objects.filter(user_id=request.user.id)
+    context = {}
+    if allapplications:
+        context = {'alljobs': allapplications, 'applied':True}
+    return render(request, './all_applied_jobs.html', context)
+
+
 
 def delete_invalid_jobs(request):
     to_update = Job.objects.filter(last_date__date__lt=date.today())
@@ -235,6 +237,9 @@ def display_image(request, img):
     
 
 def register(request):
+    if request.user:
+        if request.user.is_authenticated:
+            user_logout(request)
     registered = False
     if request.method == 'POST':
         # print("Checkpoint 1")
@@ -321,10 +326,6 @@ def see_conversations(request,my_id):
             context = {'conversations':c}
 
     return render(request,'./conversation_list.html',context)
-
-@login_required
-def conversation_form(request):
-    return render(request,'./conversation_form.html')
 
 @login_required
 def all_people(request):
