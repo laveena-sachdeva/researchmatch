@@ -38,7 +38,13 @@
                             {% if request.user.is_authenticated %}
                                 {% is_already_applied job request.user as is_applied %}
                                 {% if is_applied %}
-                                    <input type="button" class="btn btn-outline-white-primary" value="Already applied"/>
+                                    {% if status == 'In Process' %}
+                                        <input type="button" class="btn btn-outline-white-primary" value="Already applied"/>
+                                    {% elif status == 'Accept' %}
+                                        <input type="button" class="btn btn-outline-white-primary" value='Accepted'/>
+                                    {% else %}
+                                        <input type="button" class="btn btn-outline-white-primary" value='Rejected'/>
+                                    {% endif %}
                                 {% else %}
                                     <form action="{% url 'apply-job' job.id %}" method="post">
                                         {% csrf_token %}
@@ -75,9 +81,9 @@
                                 <table>
                                     <tr><th>Applicant</th><th>Decision</th></tr>
                                     {% for application in applied_data %}
-                                                               <tr>
+                                        <tr>
                                         {% if application.1 == 'In Process' %}
-                                            <form action="{% url 'app_status' application.0.user_id job_id %}" method="post">
+                                            <form action="{% url 'app_status' application.0.user_id job.id %}" method="post">
                                                 {% csrf_token %}
                                                 <td><label for="acceptance"> <a href="/conversation/create/{{ application.0.user_id }}/"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
                                                 <td>
