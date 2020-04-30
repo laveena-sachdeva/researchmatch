@@ -14,22 +14,17 @@ class MessageForm(forms.ModelForm):
         self.conversation = conversation
 
         if self.conversation:
-            print("In first if")
             conversation_users = self.conversation.users.all()
         else:
-            print("In first else")
             conversation_users = [self.initial_user]
         # Check if this conversation has been blocked
         self.blocked_users = models.BlockedUser.objects.filter(
             Q(blocked_by=self.user, user__in=conversation_users) |
             Q(user=self.user, blocked_by__in=conversation_users),
         )
-        print("Calling super")
-
         super(MessageForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        print("clean method")
         if self.blocked_users and self.blocked_users.filter(
                 blocked_by=self.user):
             raise forms.ValidationError(_(
@@ -39,7 +34,6 @@ class MessageForm(forms.ModelForm):
         return super(MessageForm, self).clean()
 
     def save(self, *args, **kwargs):
-        print("save method")
         if not self.instance.pk:
             self.instance.user = self.user
             if self.conversation:
