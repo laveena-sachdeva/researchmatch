@@ -56,22 +56,28 @@ class JobDetailsView(DetailView):
     def get(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
-            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id','status')
-            user_data = list()
-            for i in range(len(all_students)):
-                user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
-                user_data.append((user_info,all_students[i]['status']))
-            if request.user.myuser.role == "Professor":
-                print("Categorizing data")
-                result = categorize(user_data)
-                user_data = query(result,self.object.description)
         except Http404:
             # redirect here
             raise Http404("Job doesn't exists")
         context = self.get_context_data(object=self.object)
-        context['applied_data'] = user_data
-        context['job_id'] = kwargs['id']
-        context['role']=UserProfileInfo.objects.get(user_id=request.user.id).role
+        if request.user.myuser.role == "Professor":
+            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id', 'status')
+            user_data = list()
+            for i in range(len(all_students)):
+                user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
+                user_data.append((user_info, all_students[i]['status'],0))
+            try:
+                print("Categorizing data")
+                result = categorize(user_data)
+                user_data = query(result, self.object.description)
+                context['applied_data'] = user_data
+            except:
+                context['applied_data'] = user_data
+        else:
+            status = Applicant.objects.filter(job_id=kwargs['id'], user_id=request.user.id).values('status')
+            if status:
+                context['status'] = status[0]['status']
+        context['role'] = UserProfileInfo.objects.get(user_id=request.user.id).role
         return self.render_to_response(context)
 
     def get_success_url(self):
