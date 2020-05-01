@@ -11,12 +11,19 @@ roles = (
 
 class UserForm(forms.ModelForm):
         password = forms.CharField(widget=forms.PasswordInput())
+        email = forms.CharField(required = True)
+
         class Meta():
             model = User
             fields = ('username','password','email')
 
 class UserProfileInfoForm(forms.ModelForm):
     role = forms.ChoiceField(choices=roles, required=True )
+    profile_pic = forms.ImageField(required = True)
+    resume = forms.FileField(required=True)
+
+
+
     class Meta():
 	    model = UserProfileInfo
 	    fields = ('full_name','linkedin_url','profile_pic','role','resume','skill_description','university')
