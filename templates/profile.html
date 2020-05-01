@@ -31,19 +31,17 @@ img {
                         {% csrf_token %} -->
                 <div class = 'title-cover'>
                     <div class = "profile_pic" align = "left">
-                      {% if user.myuser.profile_pic %}
                       {% if profile_link %}
                         <img src = "{{ profile_link }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />
                       {% else %}
                         <img src = "{{ user.myuser.profile_pic.url }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />
                       {% endif %}
-                      {% endif %}
                     </div>
                     <div style = "position: absolute;top: 8px;right: 16px;font-size: 18px;" >
-                        <h1 class="heading">{{allinfo.myuser.full_name}}, {{allinfo.username}} </h1>
+                        <h1 class="heading">{{allinfo.myuser.full_name}}, {{allinfo.username}}
+                        <br/> {{allinfo.email}} </h1>
                     </div>
                 </div>
-
                       {% if user.myuser.linkedin_url %}
                           <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
                        <div class="row">
@@ -74,6 +72,9 @@ img {
                             {% else %}
                                 <a href = "{{ allinfo.myuser.resume.url }}" > resume! </a>
                             {% endif %}
+<!--                             <a href = "https://storage.googleapis.com/cc-first-web-project.appspot.com/resume/testprofilegae_resume.pdf" > resume! </a> -->
+
+                           
                         </div>
                 </div>
             </div>

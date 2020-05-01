@@ -17,6 +17,9 @@ class Universities(models.Model):
     def __str__(self):
         return self.name
 
+def validate_file_extension(value):
+    if value.file.content_type != 'application/pdf':
+        raise ValidationError(u'Error message')
 
 all_universities = Universities.objects.all()
 all_universities = tuple((u.name,u.name) for u in all_universities)
