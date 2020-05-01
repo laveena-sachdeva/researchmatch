@@ -278,10 +278,13 @@ def register(request):
                     destination_blob_name= "resume/" + user.username + "_resume.pdf"
                     bucket_name = os.environ.get("BUCKET_NAME")
                     upload_blob(bucket_name,file_obj, destination_blob_name)
+                    profile.resume = None
+                    profile.profile_pic= None
+                    profile.save()
                 else:
                     print("Saving locally")
                     profile.resume = request.FILES['resume'] 
-            profile.save()
+                    profile.save()
             registered = True
         else:
             print("Checkpoint 4")

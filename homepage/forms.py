@@ -20,9 +20,7 @@ class UserForm(forms.ModelForm):
 class UserProfileInfoForm(forms.ModelForm):
     role = forms.ChoiceField(choices=roles, required=True )
     profile_pic = forms.ImageField(required = True)
-    resume = forms.FileField(required=True)
-
-
+    resume = forms.FileField(required=True, widget=forms.FileInput(attrs={'accept':'application/pdf'}))
 
     class Meta():
 	    model = UserProfileInfo
