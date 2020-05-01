@@ -13,7 +13,7 @@
                 <small>at <a href="#"> {{ job.company_name }}</a></small>
             </h1>
             <div class="job-detail-description"><i class="fa fa-map-marker job__location"> </i>
-                {{ job.location }} | Posted {{ job.created_at|timesince }} |
+                Posted by <a href = "/view_profile/{{job.user.id}}">{{job.user.myuser.full_name}} </a>|{{ job.location }} | Posted {{ job.created_at|timesince }} |
                 {% if job.type == '1' %}
                     <span class="badge featured-badge badge-success">Full time</span>
                 {% elif job.type == '2' %}
@@ -85,7 +85,7 @@
                                         {% if application.1 == 'In Process' %}
                                             <form action="{% url 'app_status' application.0.user_id job.id %}" method="post">
                                                 {% csrf_token %}
-                                                <td><label for="acceptance"> <a href="/conversation/create/{{ application.0.user_id }}/"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
+                                                <td><label for="acceptance"> <a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
                                                 <td>
                                                 <select id="acceptance" name="acceptance">
                                                     <option value="In Process">In Process</option>
@@ -96,8 +96,11 @@
                                                 </td>
                                             </form>
                                         {% else %}
-                                            <td><a href="/conversation/create/{{ application.0.user_id }}/"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a></td><td>{{application.1}}</td>
+                                            <td><a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a></td><td>{{application.1}}</td>
                                         {% endif %}
+                                        <td>
+                                            <a href='/conversation/create/{{ application.0.user_id }}/'> Chat </a>
+                                        <td>
                                         </tr>
                                     {% endfor %}
                                 </table><br/>
