@@ -27,8 +27,6 @@ img {
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 mx-auto">
-<!--                     <form id="job-main-form" method="post" action="{% url 'save_job' %}" class="job-add-form">
-                        {% csrf_token %} -->
                 <div class = 'title-cover'>
                     <div class = "profile_pic" align = "left">
                       {% if profile_link %}
@@ -42,16 +40,19 @@ img {
                         <br/> {{allinfo.email}} </h1>
                     </div>
                 </div>
-                      {% if user.myuser.linkedin_url %}
                           <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
                        <div class="row">
                             <div class="col-lg-12 form-group">
                                 <br>
-                                <label> I am a {{ allinfo.myuser.role }}. Visit my</label>
-                                <a href="{{ user.myuser.linkedin_url }} "> Linkedin </a>
+
+                                <label> I am a {{ allinfo.myuser.role }}.</label>
+                              {% if user.myuser.linkedin_url %}
+
+                                Visit my <a href="{{ user.myuser.linkedin_url }} ">  Linkedin </a>
+                              {% endif %}
+
                             </div>
                         </div>
-                      {% endif %}
                         <div class="row">
                             <div class="col-lg-12 form-group">
                                 <label for="text">My Skills </label>
@@ -72,13 +73,13 @@ img {
                             {% else %}
                                 <a href = "{{ allinfo.myuser.resume.url }}" > resume! </a>
                             {% endif %}
-<!--                             <a href = "https://storage.googleapis.com/cc-first-web-project.appspot.com/resume/testprofilegae_resume.pdf" > resume! </a> -->
-
-                           
+<!--                             <a href = "https://storage.googleapis.com/cc-first-web-project.appspot.com/resume/testprofilegae_resume.pdf" > resume! </a> -->                          
                         </div>
                 </div>
             </div>
-        </div>
+        </div> 
+          <a href='/conversation/create/{{ allinfo.id }}'> MESSAGE ME </a>
+
     </section>
 
 {% endblock %}

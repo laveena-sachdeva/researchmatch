@@ -29,7 +29,7 @@ class UserProfileInfo(models.Model):
     full_name = models.CharField(max_length=300, blank = False)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name ="myuser")
     linkedin_url = models.URLField(blank=True)
-    profile_pic = models.ImageField(upload_to='profile_pics',blank=True)
+    profile_pic = models.ImageField(upload_to='profile_pics')
     role = models.CharField(max_length=9, choices=roles, default = "Student")
     resume = models.FileField(upload_to='resume', blank=True)
     skill_description = models.TextField(default="")
