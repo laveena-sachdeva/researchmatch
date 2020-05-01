@@ -78,7 +78,9 @@ img {
                 </div>
             </div>
         </div> 
-          <a href='/conversation/create/{{ allinfo.id }}'> MESSAGE ME </a>
+        {% if allinfo.id != request.user.id %}
+          <a href='/conversation/create/{{ allinfo.id }}/'> MESSAGE ME </a>
+        {% endif %}
 
     </section>
 

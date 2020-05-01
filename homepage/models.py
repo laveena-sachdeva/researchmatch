@@ -4,6 +4,24 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 # from accounts.models import User
+import os
+import mimetypes
+from django.core.exceptions import ValidationError
+
+def validate_is_pdf(file):
+    valid_mime_types = ['application/pdf']
+    # file_mime_type = magic.from_buffer(file.read(1024), mime=True)
+    file_mime_type = mimetypes.guess_type(file.name)
+    print("mime type")
+    print(file.name)
+    print(file_mime_type)
+    if file_mime_type[0] not in valid_mime_types:
+        raise ValidationError('Unsupported file type.')
+    valid_file_extensions = ['.pdf']
+    ext = os.path.splitext(file.name)[1]
+    if ext.lower() not in valid_file_extensions:
+        raise ValidationError('Unacceptable file extension.')
+
 
 roles = (  
 ('Professor', 'Professor'),
@@ -31,7 +49,7 @@ class UserProfileInfo(models.Model):
     linkedin_url = models.URLField(blank=True)
     profile_pic = models.ImageField(upload_to='profile_pics')
     role = models.CharField(max_length=9, choices=roles, default = "Student")
-    resume = models.FileField(upload_to='resume', blank=True)
+    resume = models.FileField(upload_to='resume', validators=(validate_is_pdf,))
     skill_description = models.TextField(default="")
     university = models.CharField(max_length = 100, choices = all_universities, default = 'Arizona State University--Tempe' )
     def __str__(self):
