@@ -16,6 +16,8 @@ from django.contrib import messages
 from conversation.models import Conversation, Message
 from django.contrib.auth.models import User
 from datetime import date
+# from homepage import generate_signed_url as gen
+import time
 import os
 
 if os.getenv('GAE_APPLICATION', None):
@@ -249,8 +251,8 @@ def register(request):
     registered = False
     if request.method == 'POST':
         # print("Checkpoint 1")
-        user_form = UserForm(data=request.POST)
-        profile_form = UserProfileInfoForm(data=request.POST)
+        user_form = UserForm(request.POST, request.FILES)
+        profile_form = UserProfileInfoForm(request.POST,request.FILES)
         if user_form.is_valid() and profile_form.is_valid():
             # print("Checkpoint 2")
 
@@ -276,13 +278,16 @@ def register(request):
                     destination_blob_name= "resume/" + user.username + "_resume.pdf"
                     bucket_name = os.environ.get("BUCKET_NAME")
                     upload_blob(bucket_name,file_obj, destination_blob_name)
+                    profile.resume = None
+                    profile.profile_pic= None
+                    profile.save()
                 else:
                     print("Saving locally")
                     profile.resume = request.FILES['resume'] 
-            profile.save()
+                    profile.save()
             registered = True
         else:
-            # print("Checkpoint 4")
+            print("Checkpoint 4")
 
             print(user_form.errors,profile_form.errors)
     else:
@@ -338,3 +343,62 @@ def all_people(request):
     allpeople= User.objects.all()
     context= {'allusers': allpeople}
     return render(request, './people.html', context)
+
+
+# def sign_url(obj, expires_after_seconds=60):
+
+#     client = storage.Client()
+#     default_bucket = os.environ.get("BUCKET_NAME")
+#     bucket = client.get_bucket(default_bucket)
+#     blob = storage.Blob(obj, bucket)
+
+#     expiration_time = int(time.time() + expires_after_seconds)
+
+#     url = blob.generate_signed_url(expiration_time)
+
+#     return url
+
+
+def sign_url(filename):
+    import os, google.auth
+    from google.auth.transport import requests
+    from google.auth import compute_engine
+    from datetime import datetime, timedelta
+    from google.cloud import storage
+
+    auth_request = requests.Request()
+    credentials, project = google.auth.default()
+    storage_client = storage.Client(project, credentials)
+    data_bucket = storage_client.lookup_bucket(os.getenv("BUCKET_NAME"))
+    signed_blob_path = data_bucket.blob(filename)
+    expires_at_ms = datetime.now() + timedelta(minutes=60)
+    signing_credentials = compute_engine.IDTokenCredentials(auth_request, "", service_account_email=storage_client._credentials.service_account_email,)
+    signed_url = signed_blob_path.generate_signed_url(expires_at_ms, credentials=signing_credentials, version="v4")
+    return signed_url
+
+@login_required
+def view_profile(request, user_id):
+
+    allinfo = User.objects.get(id = user_id)
+    ctx = {'allinfo':allinfo}
+
+    if os.getenv('GAE_APPLICATION', None):
+        bucket_name = os.environ.get("BUCKET_NAME")
+        # GOOGLE_APPLICATION_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+        # signed_url = gen.generate_download_signed_url_v4(bucket_name = bucket_name, blob_name = "resume/" + allinfo.username + "_resume.pdf" , )
+        resume_link = sign_url("resume/" + allinfo.username + "_resume.pdf")
+        profile_link = sign_url("profile_pics/" + allinfo.username + "_profile_pic.jpg")
+        # # resume_link = bucket_name + "/resume/" + allinfo.username + "_resume.pdf"
+
+        # # signing_credentials = compute_engine.IDTokenCredentials(auth_request, "", service_account_email=credentials.service_account_email)
+        # # signed_url = signed_blob_path.generate_signed_url(expires_at_ms, credentials=signing_credentials, version="v4")
+
+        # print("signed_url")
+        # print(signed_url)
+        # resume_link = signed_url
+        # profile_link = bucket_name + "/profile_pics" + allinfo.username + "_profile_pic.jpg"
+        ctx['resume_link'] = resume_link
+        ctx['profile_link'] = profile_link
+
+    return render(request, './profile.html', ctx)
+
