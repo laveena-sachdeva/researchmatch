@@ -24,6 +24,8 @@ img {
 
 {% block body_block %}
     <section>
+    	<form action="/update_profile/"  enctype="multipart/form-data" method="POST">
+		{% csrf_token %}
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 mx-auto">
@@ -34,11 +36,12 @@ img {
                       {% else %}
                         <img src = "{{ user.myuser.profile_pic.url }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />
                       {% endif %}
+                      	<label for="img">Upload a new profile pic</label>
+						<input type="file" id="img" name="profile_pic" accept="image/*">
                     </div>
                     <div style = "position: absolute;top: 8px;right: 16px;font-size: 18px;" >
                         <h1 class="heading">{{allinfo.myuser.full_name}}, {{allinfo.username}}
                         <br/> {{allinfo.email}} </h1>
-                        <a href = "/update/{{allinfo.id}}/"> Update Profile </a>
                     </div>
                 </div>
                           <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
@@ -47,9 +50,17 @@ img {
                                 <br>
 
                                 <label> I am a {{ allinfo.myuser.role }}.</label>
+                                <label for = "url"> Enter/update your linkedin</label>
                               {% if user.myuser.linkedin_url %}
-
-                                Visit my <a href="{{ user.myuser.linkedin_url }} ">  Linkedin </a>
+								<input type="url" name="linkedin" id="url"
+							       placeholder="https://linkedin.com/"
+							       pattern="https://www.linkedin.com/.*" size="30" value ="{{ user.myuser.linkedin_url }}"
+							       >
+							    {% else %} 
+								<input type="url" name="linkedin" id="url"
+							       placeholder="https://linkedin.com/"
+							       pattern="https://www.linkedin.com/.*" size="30" 
+							       >
                               {% endif %}
 
                             </div>
@@ -57,7 +68,7 @@ img {
                         <div class="row">
                             <div class="col-lg-12 form-group">
                                 <label for="text">My Skills </label>
-                                <textarea id="description" name="description" rows="5" class="form-control" readonly>{{ allinfo.myuser.skill_description}}</textarea>
+                                <textarea id="description" name="description" rows="5" class="form-control">{{ allinfo.myuser.skill_description}}</textarea>
                                 <!-- <input type="text" value="{{ allinfo.myuser.skill_description}}" required readonly /> -->
 
                             
@@ -66,26 +77,30 @@ img {
                         <div class="row">
                             <div class="col-lg-12 form-group">
                                 <label for="university">University</label>
-                                <p> {{allinfo.myuser.university}}</p>
+	                            <select id = "university" name = "university">
+                                {% for u in univs %}
+                                	{% if u.name == allinfo.myuser.university %}
+					               <option value = "{{ u.name }}" selected>{{u.name}}</option>
+                                	{% else %}
+					               <option value = "{{ u.name }}" >{{u.name}}</option>
+					               	{% endif %}
+                                {% endfor %}
+                                </select>
+                                <!-- <p> {{allinfo.myuser.university}}</p> -->
                             </div>
                         </div>
                         
                         <div class="row;col-lg-12 form-group">
-                            <label for="resume">Checkout my </label>
-                            {% if resume_link %}
-                                <a href = "{{ resume_link }}" > resume! </a>
-                            {% else %}
-                                <a href = "{{ allinfo.myuser.resume.url }}" > resume! </a>
-                            {% endif %}
-<!--                             <a href = "https://storage.googleapis.com/cc-first-web-project.appspot.com/resume/testprofilegae_resume.pdf" > resume! </a> -->                          
+                            <label for="resume">Upload a new resume</label>
+							<input name="resume" type="file" accept="application/pdf">
+                 
                         </div>
                 </div>
             </div>
         </div> 
-        {% if allinfo.id != request.user.id %}
-          <a href='/conversation/create/{{ allinfo.id }}/'> MESSAGE ME </a>
-        {% endif %}
-
+        
+        <input type="submit" name="submit" value = "Save Changes">
+    </form>
     </section>
 
 {% endblock %}

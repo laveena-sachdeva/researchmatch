@@ -53,5 +53,8 @@ urlpatterns = [
                             url(r'^all_people/$', views.all_people, name='all_people'),
                             path(r'view_profile/<int:user_id>', views.view_profile, name='view_profile'),
                             url(r'^jobs/$', views.filter_jobs_view, name='jobs'),
+                            path(r'update/<int:user_id>/', views.update_profile, name='update_profile'),
+                            url(r'^update_profile/$', views.update_profile_in_db, name='update_profile_in_db'),
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
