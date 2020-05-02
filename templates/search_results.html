@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body_block %}
+    <section>
+    	    {% if results %}
+        						<table>
+
+                                    <tr><th>Your search matched the following users</th></tr>
+                                    {% for r in results %}
+                                        <tr>
+                                            <td><a href="/view_profile/{{r.user_id}}"> {{ r.full_name }}, {{r.user.username}} </a></td><td>{{application.1}}</td>
+                                        <td>
+                                        </tr>
+                                    {% endfor %}
+                                </table><br/>
+            {% else %}
+            <p> Your search did not match any user </p>
+            {% endif %}
+    </section>
+
+{% endblock %}

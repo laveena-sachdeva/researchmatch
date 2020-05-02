@@ -55,6 +55,7 @@ urlpatterns = [
                             url(r'^jobs/$', views.filter_jobs_view, name='jobs'),
                             path(r'update/<int:user_id>/', views.update_profile, name='update_profile'),
                             url(r'^update_profile/$', views.update_profile_in_db, name='update_profile_in_db'),
+                            path(r'search_people$', views.search_people, name='search_people'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

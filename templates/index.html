@@ -8,6 +8,11 @@
 		       	<h1>Welcome to ResearchMatch</h1>
 		      {% endif %}
 		          {% if user.is_authenticated %}
+		          	<form action = "{% url 'search_people' %}" method = 'POST'>
+      					{% csrf_token %}
+      					<input type="text" name="search_bar"/>
+      					<input type="submit" name="submit_botton" value = "search">
+		          	</form>
 			          <h2>Hello {{ user.myuser.full_name }}</h2>
   			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
   			          <a href = '/view_profile/{{user.id}}'> Visit Profile </a>
