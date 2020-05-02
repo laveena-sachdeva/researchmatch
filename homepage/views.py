@@ -484,4 +484,20 @@ def update_profile_in_db(request):
             else:
                 updatedUser.resume = request.FILES['resume'] 
         updatedUser.save()
-    return HttpResponse("updated")
+    return HttpResponseRedirect("/update/" + str(request.user.id))
+
+@login_required
+def search_people(request):
+    if request.method == 'POST':
+        search_string = request.POST.get('search_bar').lower()
+        # print("search_string")
+        # print(search_string)
+        possible_result = UserProfileInfo.objects.filter(full_name__icontains=search_string)
+        ctx = {}
+        if possible_result:
+            print(possible_result)
+            ctx['results'] = possible_result
+
+        return render(request, './search_results.html', ctx)
+    else:
+        return HttpResponse("Inappropriate Request")
