@@ -384,19 +384,8 @@ def view_profile(request, user_id):
 
     if os.getenv('GAE_APPLICATION', None):
         bucket_name = os.environ.get("BUCKET_NAME")
-        # GOOGLE_APPLICATION_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
-        # signed_url = gen.generate_download_signed_url_v4(bucket_name = bucket_name, blob_name = "resume/" + allinfo.username + "_resume.pdf" , )
         resume_link = sign_url("resume/" + allinfo.username + "_resume.pdf")
         profile_link = sign_url("profile_pics/" + allinfo.username + "_profile_pic.jpg")
-        # # resume_link = bucket_name + "/resume/" + allinfo.username + "_resume.pdf"
-
-        # # signing_credentials = compute_engine.IDTokenCredentials(auth_request, "", service_account_email=credentials.service_account_email)
-        # # signed_url = signed_blob_path.generate_signed_url(expires_at_ms, credentials=signing_credentials, version="v4")
-
-        # print("signed_url")
-        # print(signed_url)
-        # resume_link = signed_url
-        # profile_link = bucket_name + "/profile_pics" + allinfo.username + "_profile_pic.jpg"
         ctx['resume_link'] = resume_link
         ctx['profile_link'] = profile_link
 
@@ -409,6 +398,12 @@ def update_profile(request, user_id):
     univs = Universities.objects.all()
     ctx = {"allinfo": allinfo, 'univs':univs}
     # return HttpResponse("updating profile")
+    if os.getenv('GAE_APPLICATION', None):
+        bucket_name = os.environ.get("BUCKET_NAME")
+        resume_link = sign_url("resume/" + allinfo.username + "_resume.pdf")
+        profile_link = sign_url("profile_pics/" + allinfo.username + "_profile_pic.jpg")
+        ctx['resume_link'] = resume_link
+        ctx['profile_link'] = profile_link
     return render(request, './update_profile.html', ctx)
 
 @login_required
@@ -431,7 +426,7 @@ def update_profile_in_db(request):
             if os.getenv('GAE_APPLICATION', None):
                 file_obj = request.FILES['profile_pic']
                 # print(file_obj)
-                destination_blob_name= "profile_pics/" + user.username + "_profile_pic.jpg"
+                destination_blob_name= "profile_pics/" + request.user.username + "_profile_pic.jpg"
                 bucket_name = os.environ.get("BUCKET_NAME")
                 upload_blob(bucket_name,file_obj, destination_blob_name)
             else:
@@ -440,7 +435,7 @@ def update_profile_in_db(request):
             if os.getenv('GAE_APPLICATION', None):
                 file_obj = request.FILES['resume']
                 # print(file_obj)
-                destination_blob_name= "resume/" + user.username + "_resume.pdf"
+                destination_blob_name= "resume/" + request.user.username + "_resume.pdf"
                 bucket_name = os.environ.get("BUCKET_NAME")
                 upload_blob(bucket_name,file_obj, destination_blob_name)
             else:
