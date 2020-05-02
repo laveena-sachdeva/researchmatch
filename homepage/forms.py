@@ -27,8 +27,6 @@ class UserProfileInfoForm(forms.ModelForm):
 	    fields = ('full_name','linkedin_url','profile_pic','role','resume','skill_description','university')
 
 
-# from jobsapp.models import Job, Applicant
-
 
 class CreateJobForm(forms.ModelForm):
     class Meta:
