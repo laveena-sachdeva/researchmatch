@@ -7,7 +7,73 @@
 {% block body_block %}
 
         <div class="container">
-            <h3 class="heading">Currently Applied Jobs</h3>
+            <h3 class="heading">Jobs</h3>
+            <style type="text/css">
+                td
+                {
+                    padding:0 5px;
+                }
+            </style>
+            <table>
+                <tr>
+                <form action="{% url 'jobs' %}" method="get">
+                    {% csrf_token %}
+                    <td><label for="filter"> Jobs Filter </label></td>
+                    <td>
+                    <select id="filter" name="filter">
+                        <option value="All">All</option>
+                        <option value="Applied">Applied</option>
+                        <option value="University">University</option>
+                        <option value="Professor">Professor</option>
+                    </select>
+                    <input type="submit" value="OK">
+                    </td>
+                </form>
+                </tr>
+            </table>
+
+                {% if prof_list %}
+                    <table>
+                    <tr>
+                    <form action="{% url 'jobs' %}" method="get">
+                        {% csrf_token %}
+                        <td><label for="prof"> Select Professor Name </label></td>
+                        <td>
+                        <select id="prof" name="prof">
+                            {% for entry in prof_list %}
+                                <option value="{{ entry.user_id }}">{{ entry.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="OK">
+                        </td>
+                    </form>
+                    </tr>
+                    </table>
+                {% elif prof_name %}
+                    <p><i>Posted by {{ prof_name }}</i></p>
+                {% elif university_list %}
+                    <table>
+                    <tr>
+                    <form action="{% url 'jobs' %}" method="get">
+                        {% csrf_token %}
+                        <td><label for="university"> Select University </label></td>
+                        <td>
+                        <select id="university" name="university">
+                            {% for entry in university_list %}
+                                <option value="{{ entry.name }}">{{ entry.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="OK">
+                        </td>
+                    </form>
+                    </tr>
+                    </table>
+                {% elif university %}
+                    <p><i>Posted by {{ university }}</i></p>
+                {% else %}
+                    <p><i>No jobs found with this filter</i></p>
+                {% endif %}
+
             {% if alljobs %}
                 <div class="row featured align-items-stretch">
                     {% for j in alljobs %}
@@ -28,18 +94,18 @@
                                 <div class="content">
                                     <!-- <p> The job id is {{ job.id }}</p> -->
                                     <!-- <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5>                                 -->
-                                    <h5><a href ="{% url 'job_details' j.job.id %}"> {{ j.job.title }}</a></h5>                                                                
+                                    <h5><a href ="{% url 'job_details' j.id %}"> {{ j.title }}</a></h5>
                                     <p class="featured__details"><i class="fa fa-map-marker job__location"></i>
-                                        {{ j.job.location }}
-                                        {% if j.job.type == '1' %}
+                                        {{ j.location }}
+                                        {% if j.type == '1' %}
                                             <span class="badge featured-badge badge-success">Full time</span>
-                                        {% elif j.job.type == '2' %}
+                                        {% elif j.type == '2' %}
                                             <span class="badge featured-badge badge-primary">Part time</span>
                                         {% else %}
                                             <span style="color: #ffffff;" class="badge featured-badge badge-warning">Internship</span>
                                         {% endif %}
                                     </p>
-                                    <p>{{ j.job.description }}</p>
+                                    <p>{{ j.description }}</p>
                                     {% if applied %}
                                          <p>Application Status : {{ j.status }}</p>
                                     {% endif %}
@@ -48,9 +114,7 @@
                         </div>
                     {% endfor %}
                 </div>
-                {% else %}
-                <p> You have not applied for any jobs yet. </p>
-                {% endif %}
+            {% endif %}
         </div>
 
 {% endblock %}
