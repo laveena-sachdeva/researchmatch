@@ -13,8 +13,7 @@
   			          <a href = '/view_profile/{{user.id}}'> Visit Profile </a>
      		          {% if user.myuser.role == "Student" %}
 		  				{% if alljobs|length %}
-       		          		<h5> <a href = '/alljobs/' >See all jobs </a> </h5>
-       		          		<h5> <a href = '/appliedjobs/' >See applied jobs </a> </h5>
+       		          		<h5> <a href = '/jobs' > Jobs </a> </h5>
 		  				{% else %}
 		  					<h5>No jobs posted</h5>
 		  				{% endif %}

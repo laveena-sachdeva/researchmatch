@@ -156,7 +156,8 @@ def index_student(request):
 
 @login_required
 def post_a_job(request):
-        return render(request,'./jobpost.html')
+        university_list = Universities.objects.all()
+        return render(request,'./jobpost.html',{'university_list': university_list})
 
 def index_professor(request):
         return HttpResponseRedirect(reverse(index))
@@ -183,6 +184,48 @@ def applied_jobs_view(request):
         context = {'alljobs': allapplications, 'applied':True}
     return render(request, './all_applied_jobs.html', context)
 
+def filter_jobs_view(request):
+    filter = request.GET.get("filter")
+    prof = request.GET.get("prof")
+    university = request.GET.get("university")
+    print(filter,prof)
+    print(request.user.id)
+    if filter == "All":
+        alljobs = Job.objects.all()
+        print(alljobs)
+        context = {'alljobs': alljobs}
+        # return HttpResponseRedirect(self.get_success_url())
+        return render(request, './all_applied_jobs.html', context)
+    elif filter == "Applied":
+        allapplications = Applicant.objects.filter(user_id=request.user.id)
+        context = {}
+        result = []
+        for entry in allapplications:
+            result.append({'id':entry.job.id,'title':entry.job.title,'location':entry.job.location,'type':entry.job.type,'description':entry.job.description,'status':entry.status})
+
+        if allapplications:
+            context = {'alljobs': result, 'applied': True}
+        return render(request, './all_applied_jobs.html', context)
+    elif filter == "Professor":
+        prof_list = UserProfileInfo.objects.filter(role="Professor")
+        if prof_list:
+            return render(request, './all_applied_jobs.html', {'prof_list':prof_list})
+    elif prof:
+        alljobs = Job.objects.filter(user_id=prof)
+        if alljobs:
+            prof_name = UserProfileInfo.objects.get(user_id=prof).full_name
+            context = {'alljobs': alljobs,'prof_name':prof_name}
+            return render(request, './all_applied_jobs.html', context)
+    elif filter == "University":
+        university_list = Universities.objects.all()
+        return render(request, './all_applied_jobs.html', {'university_list': university_list})
+    elif university:
+        alljobs = Job.objects.filter(workplace_name=university)
+        if alljobs:
+            context = {'alljobs': alljobs,'university':university}
+            return render(request, './all_applied_jobs.html', context)
+    else:
+        return render(request, './all_applied_jobs.html', {})
 
 
 def delete_invalid_jobs(request):
