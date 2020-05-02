@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse,Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from homepage.models import Job, Applicant, UserProfileInfo
+from homepage.models import Job, Applicant, UserProfileInfo, Universities
 from django.views.generic import ListView, DetailView, CreateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
@@ -402,3 +402,48 @@ def view_profile(request, user_id):
 
     return render(request, './profile.html', ctx)
 
+
+@login_required
+def update_profile(request, user_id):
+    allinfo = User.objects.get(id = user_id)
+    univs = Universities.objects.all()
+    ctx = {"allinfo": allinfo, 'univs':univs}
+    # return HttpResponse("updating profile")
+    return render(request, './update_profile.html', ctx)
+
+@login_required
+
+def update_profile_in_db(request):
+    if request.method == 'POST':
+        linkedin = request.POST.get('linkedin')
+        print("linkedin")
+        print(linkedin)
+        description = request.POST.get('description')
+        print(description)
+        univ = request.POST.get('university')
+        print(univ)
+
+        updatedUser = UserProfileInfo.objects.get(user_id = request.user.id)
+        updatedUser.linkedin_url = linkedin
+        updatedUser.skill_description = description
+        updatedUser.university = univ
+        if 'profile_pic' in request.FILES:
+            if os.getenv('GAE_APPLICATION', None):
+                file_obj = request.FILES['profile_pic']
+                # print(file_obj)
+                destination_blob_name= "profile_pics/" + user.username + "_profile_pic.jpg"
+                bucket_name = os.environ.get("BUCKET_NAME")
+                upload_blob(bucket_name,file_obj, destination_blob_name)
+            else:
+                updatedUser.profile_pic = request.FILES['profile_pic']
+        if 'resume' in request.FILES:
+            if os.getenv('GAE_APPLICATION', None):
+                file_obj = request.FILES['resume']
+                # print(file_obj)
+                destination_blob_name= "resume/" + user.username + "_resume.pdf"
+                bucket_name = os.environ.get("BUCKET_NAME")
+                upload_blob(bucket_name,file_obj, destination_blob_name)
+            else:
+                updatedUser.resume = request.FILES['resume'] 
+        updatedUser.save()
+    return HttpResponse("updated")
