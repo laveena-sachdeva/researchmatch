@@ -38,7 +38,20 @@ img {
                     <div style = "position: absolute;top: 8px;right: 16px;font-size: 18px;" >
                         <h1 class="heading">{{allinfo.myuser.full_name}}, {{allinfo.username}}
                         <br/> {{allinfo.email}} </h1>
-                        <a href = "/update/{{allinfo.id}}/"> Update Profile </a>
+                    <script type="text/javascript">
+                        function submitUpdateProfileForm()
+                        {
+                          document.updateProfileForm.submit();
+                        }
+
+                  </script>
+<!--                         <a href = "/update/{{allinfo.id}}/">  </a>
+ -->                <form name="updateProfileForm" action="{% url 'update_profile' %}">
+                      {% csrf_token %}
+                       <a href = 'javascript: submitUpdateProfileForm()'> Update Profile </a>
+                   </form>
+
+
                     </div>
                 </div>
                           <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
