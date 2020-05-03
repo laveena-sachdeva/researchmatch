@@ -371,7 +371,8 @@ def user_login(request):
         return render(request, './login.html', {})                                
 
 @login_required
-def see_conversations(request,my_id):
+def see_conversations(request):
+    my_id = request.user.id
     allusers = User.objects.get(id=my_id)
     context = {}
     if allusers:
@@ -420,8 +421,8 @@ def sign_url(filename):
     return signed_url
 
 @login_required
-def view_profile(request, user_id):
-
+def view_profile(request):
+    user_id = request.user.id
     allinfo = User.objects.get(id = user_id)
     ctx = {'allinfo':allinfo}
 
