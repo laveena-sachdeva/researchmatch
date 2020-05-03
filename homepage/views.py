@@ -437,7 +437,8 @@ def view_profile(request):
 
 
 @login_required
-def update_profile(request, user_id):
+def update_profile(request):
+    user_id = request.user.id
     allinfo = User.objects.get(id = user_id)
     univs = Universities.objects.all()
     ctx = {"allinfo": allinfo, 'univs':univs}
@@ -485,7 +486,7 @@ def update_profile_in_db(request):
             else:
                 updatedUser.resume = request.FILES['resume'] 
         updatedUser.save()
-    return HttpResponseRedirect("/update/" + str(request.user.id))
+    return HttpResponseRedirect(reverse('update_profile'))
 
 @login_required
 def search_people(request):

@@ -55,7 +55,7 @@ urlpatterns = [
                             # path(r'view_profile/<int:user_id>', views.view_profile, name='view_profile'),
                             path(r'view_profile', views.view_profile, name='view_profile'),
                             url(r'^jobs/$', views.filter_jobs_view, name='jobs'),
-                            path(r'update/<int:user_id>/', views.update_profile, name='update_profile'),
+                            path(r'update', views.update_profile, name='update_profile'),
                             url(r'^update_profile/$', views.update_profile_in_db, name='update_profile_in_db'),
                             path(r'search_people$', views.search_people, name='search_people'),
 
