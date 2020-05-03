@@ -366,6 +366,21 @@ def register(request):
     return render(request,'./registration.html', {'user_form':user_form, 'profile_form':profile_form,'registered':registered})
     # print("Checkpoint 6")
 
+def reset_password(request):
+    print(request.user)
+    if request.method == 'GET':
+        user_form = UserForm()
+        return render(request, './reset_password.html', {'user_form': user_form})
+    else:
+        user_form = UserForm(request.POST, request.FILES)
+        if user_form.is_valid():
+            user = user_form.save()
+            user.reset_password(user.password)
+            user.save()
+            return render(request, './login.html', {})
+        else:
+            return HttpResponse("Invalid credentials")
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
