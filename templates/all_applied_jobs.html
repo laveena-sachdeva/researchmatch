@@ -41,7 +41,7 @@
                         <td>
                         <select id="prof" name="prof">
                             {% for entry in prof_list %}
-                                <option value="{{ entry.user_id }}">{{ entry.full_name }}</option>
+                                <option value="{{ entry.user_id }}">{{ entry.full_name }},{{entry}}</option>
                             {% endfor %}
                         </select>
                         <input type="submit" value="OK">

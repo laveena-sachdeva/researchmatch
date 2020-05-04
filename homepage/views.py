@@ -235,6 +235,8 @@ def filter_jobs_view(request):
                 context['alljobs'] = alljobs
                 context['university'] = university
                 context['isempty'] = False
+        else:
+            context['isempty'] = False
         return render(request, './all_applied_jobs.html', context)
     elif role == "Professor":
         filter = request.GET.get("filter")
@@ -251,6 +253,8 @@ def filter_jobs_view(request):
             if alljobs:
                 context['alljobs'] = alljobs
                 context['isempty'] = False
+        else:
+            context['isempty'] = False
         return render(request, './all_jobs.html', context)
 
 def delete_invalid_jobs(request):
