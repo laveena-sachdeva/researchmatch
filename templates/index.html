@@ -13,9 +13,23 @@
       					<input type="text" name="search_bar"/>
       					<input type="submit" name="submit_botton" value = "search">
 		          	</form>
+		          	<script type="text/javascript">
+						function submitVisitProfileForm()
+						{
+						  document.visitProfileForm.submit();
+						}
+
+						function submitSeeConversationsForm()
+						{
+						  document.seeConversationsForm.submit();
+						}
+					</script>
+
 			          <h2>Hello {{ user.myuser.full_name }}</h2>
-  			          <!-- <h2> Portfolio Site : {{ user.myuser.portfolio_site}}</h2> -->
-  			          <a href = '/view_profile/{{user.id}}'> Visit Profile </a>
+					<form name="visitProfileForm" action="{% url 'view_profile' %}">
+					{% csrf_token %}
+  			          <a href = 'javascript: submitVisitProfileForm()'> Visit Profile </a>
+  			        </form>
      		          {% if user.myuser.role == "Student" %}
 		  				{% if alljobs|length %}
        		          		<h5> <a href = '/jobs' > Jobs </a> </h5>
@@ -30,8 +44,11 @@
 		  					<h5>No jobs posted</h5>
 		  				{% endif %}
 					  {% endif %}
-       		          <a href = "{% url 'see_conversations' user.id %}"> See all conversations </a>
-       		          <br/>       		          
+  					<form name="seeConversationsForm" action="{% url 'see_conversations' %}">
+					{% csrf_token %}  			          
+  			          <a href = 'javascript: submitSeeConversationsForm()'>See all conversations </a>
+  			        </form>
+    		         <br/>       		          
 		          {% endif %}
 						    </div>
 </div>

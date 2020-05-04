@@ -411,7 +411,8 @@ def user_login(request):
         return render(request, './login.html', {})                                
 
 @login_required
-def see_conversations(request,my_id):
+def see_conversations(request):
+    my_id = request.user.id
     allusers = User.objects.get(id=my_id)
     context = {}
     if allusers:
@@ -460,8 +461,8 @@ def sign_url(filename):
     return signed_url
 
 @login_required
-def view_profile(request, user_id):
-
+def view_profile(request):
+    user_id = request.user.id
     allinfo = User.objects.get(id = user_id)
     ctx = {'allinfo':allinfo}
 
@@ -476,7 +477,8 @@ def view_profile(request, user_id):
 
 
 @login_required
-def update_profile(request, user_id):
+def update_profile(request):
+    user_id = request.user.id
     allinfo = User.objects.get(id = user_id)
     univs = Universities.objects.all()
     ctx = {"allinfo": allinfo, 'univs':univs}
@@ -524,7 +526,7 @@ def update_profile_in_db(request):
             else:
                 updatedUser.resume = request.FILES['resume'] 
         updatedUser.save()
-    return HttpResponseRedirect("/update/" + str(request.user.id))
+    return HttpResponseRedirect(reverse('update_profile'))
 
 @login_required
 def search_people(request):
