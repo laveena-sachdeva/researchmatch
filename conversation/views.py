@@ -138,9 +138,9 @@ class ConversationUpdateView(ConversationViewMixin, UpdateView):
             old_post = request.POST
         print(old_post)
         self.user = request.user
-        try: 
+        try:
             initial_user_id = old_post['other_user_id']
-                
+
             print("initial_user_id")
             print(initial_user_id)
             print(request.POST)
