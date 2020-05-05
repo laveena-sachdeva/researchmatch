@@ -67,18 +67,23 @@ class JobDetailsView(DetailView):
             raise Http404("Job doesn't exists")
         context = self.get_context_data(object=self.object)
         if request.user.myuser.role == "Professor":
-            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id', 'status')
-            user_data = list()
-            for i in range(len(all_students)):
-                user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
-                user_data.append((user_info, all_students[i]['status'],0))
-            try:
-                print("Categorizing data")
-                result = categorize(user_data)
-                user_data = query(result, self.object.description)
-                context['applied_data'] = user_data
-            except:
-                context['applied_data'] = user_data
+            job = Job.objects.filter(id=kwargs['id'],user_id=request.user.id)
+            if job:
+                all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id', 'status')
+                user_data = list()
+                for i in range(len(all_students)):
+                    user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
+                    user_data.append((user_info, all_students[i]['status'],0))
+                try:
+                    print("Categorizing data")
+                    result = categorize(user_data)
+                    user_data = query(result, self.object.description)
+                    context['applied_data'] = user_data
+                except:
+                    context['applied_data'] = user_data
+                context['posted'] = True
+            else:
+                context['posted'] = False
         else:
             status = Applicant.objects.filter(job_id=kwargs['id'], user_id=request.user.id).values('status')
             if status:
@@ -190,48 +195,77 @@ def applied_jobs_view(request):
     return render(request, './all_applied_jobs.html', context)
 
 def filter_jobs_view(request):
-    filter = request.GET.get("filter")
-    prof = request.GET.get("prof")
-    university = request.GET.get("university")
-    print(filter,prof)
-    print(request.user.id)
-    if filter == "All":
-        alljobs = Job.objects.all()
-        print(alljobs)
-        context = {'alljobs': alljobs}
-        # return HttpResponseRedirect(self.get_success_url())
-        return render(request, './all_applied_jobs.html', context)
-    elif filter == "Applied":
-        allapplications = Applicant.objects.filter(user_id=request.user.id)
-        context = {}
-        result = []
-        for entry in allapplications:
-            result.append({'id':entry.job.id,'title':entry.job.title,'location':entry.job.location,'type':entry.job.type,'description':entry.job.description,'status':entry.status})
+    role = UserProfileInfo.objects.get(user_id=request.user.id).role
+    context = {'isempty': True, 'filter': None}
+    if role == "Student":
+        filter = request.GET.get("filter")
+        prof = request.GET.get("prof")
+        university = request.GET.get("university")
+        if filter == "All":
+            context['filter'] = "All"
+            alljobs = Job.objects.all()
+            if alljobs:
+                context['alljobs'] = alljobs
+                context['isempty'] = False
+        elif filter == "Applied":
+            allapplications = Applicant.objects.filter(user_id=request.user.id)
+            context = {}
+            result = []
+            for entry in allapplications:
+                result.append({'id':entry.job.id,'title':entry.job.title,'location':entry.job.location,'type':entry.job.type,'description':entry.job.description,'status':entry.status})
 
-        if allapplications:
-            context = {'alljobs': result, 'applied': True}
+            if allapplications:
+                context['alljobs'] = result
+                context['applied'] = True
+                context['isempty'] = False
+            context['filter'] = "Applied"
+        elif filter == "Professor":
+            context['filter'] = "Professor"
+            prof_list = UserProfileInfo.objects.filter(role="Professor")
+            if prof_list:
+                context['prof_list']=prof_list
+                context['isempty'] = False
+        elif prof:
+            context['filter'] = "Professor"
+            alljobs = Job.objects.filter(user_id=prof)
+            if alljobs:
+                prof_name = UserProfileInfo.objects.get(user_id=prof).full_name
+                context['alljobs'] = alljobs
+                context['prof_name'] = prof_name
+                context['isempty'] = False
+        elif filter == "University":
+            context['filter'] = "University"
+            university_list = Universities.objects.all()
+            context['university_list']=university_list
+            context['isempty'] = False
+        elif university:
+            context['filter'] = "University"
+            alljobs = Job.objects.filter(workplace_name=university)
+            if alljobs:
+                context['alljobs'] = alljobs
+                context['university'] = university
+                context['isempty'] = False
+        else:
+            context['isempty'] = False
         return render(request, './all_applied_jobs.html', context)
-    elif filter == "Professor":
-        prof_list = UserProfileInfo.objects.filter(role="Professor")
-        if prof_list:
-            return render(request, './all_applied_jobs.html', {'prof_list':prof_list})
-    elif prof:
-        alljobs = Job.objects.filter(user_id=prof)
-        if alljobs:
-            prof_name = UserProfileInfo.objects.get(user_id=prof).full_name
-            context = {'alljobs': alljobs,'prof_name':prof_name}
-            return render(request, './all_applied_jobs.html', context)
-    elif filter == "University":
-        university_list = Universities.objects.all()
-        return render(request, './all_applied_jobs.html', {'university_list': university_list})
-    elif university:
-        alljobs = Job.objects.filter(workplace_name=university)
-        if alljobs:
-            context = {'alljobs': alljobs,'university':university}
-            return render(request, './all_applied_jobs.html', context)
-    else:
-        return render(request, './all_applied_jobs.html', {})
-
+    elif role == "Professor":
+        filter = request.GET.get("filter")
+        context = {'isempty': True, 'filter': None}
+        if filter == "All":
+            context['filter'] = "All"
+            alljobs = Job.objects.all()
+            if alljobs:
+                context['alljobs'] = alljobs
+                context['isempty'] = False
+        elif filter == "Posted by you":
+            context['filter'] = "Posted by you"
+            alljobs = Job.objects.filter(user_id=request.user.id)
+            if alljobs:
+                context['alljobs'] = alljobs
+                context['isempty'] = False
+        else:
+            context['isempty'] = False
+        return render(request, './all_jobs.html', context)
 
 def delete_invalid_jobs(request):
     to_update = Job.objects.filter(last_date__date__lt=date.today())
@@ -345,6 +379,21 @@ def register(request):
         profile_form = UserProfileInfoForm()
     return render(request,'./registration.html', {'user_form':user_form, 'profile_form':profile_form,'registered':registered})
     # print("Checkpoint 6")
+
+def reset_password(request):
+    print(request.user)
+    if request.method == 'GET':
+        user_form = UserForm()
+        return render(request, './reset_password.html', {'user_form': user_form})
+    else:
+        user_form = UserForm(request.POST, request.FILES)
+        if user_form.is_valid():
+            user = user_form.save()
+            user.reset_password(user.password)
+            user.save()
+            return render(request, './login.html', {})
+        else:
+            return HttpResponse("Invalid credentials")
 
 def user_login(request):
     if request.method == 'POST':
