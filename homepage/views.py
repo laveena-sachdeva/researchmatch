@@ -54,8 +54,12 @@ class JobDetailsView(DetailView):
         if obj is None:
             raise Http404("Job doesn't exists")
         return obj
+        # return get_object_or_404(Job, pk=request.session['user_id'])
+
 
     def get(self, request, *args, **kwargs):
+        print("In the GET method now")
+
         try:
             self.object = self.get_object()
         except Http404:
@@ -91,6 +95,7 @@ class JobDetailsView(DetailView):
         return reverse_lazy('job_details', kwargs={'id': self.kwargs['job_id']})
 
     def post(self, request, *args, **kwargs):
+        print("calling the post method")
         to_update = Applicant.objects.filter(user_id=kwargs['user_id'],job_id=kwargs['job_id'])
         to_update.update(status=request.POST.get("acceptance"))
         # return HttpResponse("Status updated")
@@ -552,3 +557,6 @@ def search_people(request):
         return render(request, './search_results.html', ctx)
     else:
         return HttpResponse("Inappropriate Request")
+
+def job_details_view(request):
+        return HttpResponse("clicked")
