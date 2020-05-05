@@ -3,7 +3,7 @@ from django import forms
 from homepage.models import UserProfileInfo, Job, Applicant
 from django.contrib.auth.models import User
 
-roles = (  
+roles = (
 ('Professor', 'Professor'),
 ('Student', 'Student'),
 )
@@ -58,4 +58,3 @@ class ApplyJobForm(forms.ModelForm):
     class Meta:
         model = Applicant
         fields = ('job',)
-

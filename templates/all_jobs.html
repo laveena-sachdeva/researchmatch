@@ -56,8 +56,21 @@
                                 </div>
                                 <div class="content">
                                     <!-- <p> The job id is {{ job.id }}</p> -->
-                                    <!-- <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5>                                 -->
-                                    <h5><a href ="{% url 'job_details' j.id %}"> {{ j.title }}</a></h5>
+                                    <!-- <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5>     -->
+                                    <script type="text/javascript">
+                                      function submitJobDetailsForm(n)
+                                      {
+                                        // window.alert(n);
+                                        n.submit();
+                                      }
+                                    </script>
+                                    <form name ="{{j}}" action = "{%url 'job_details' 999 %}" method = 'post' enctype="multipart/form-data">
+                                          {% csrf_token %}
+                                              <input type="hidden" name="job_id" value={{j.id}}>
+                                              <input type="hidden" name="details" value="True">
+                                              <h5><a href ="javascript: submitJobDetailsForm({{j}})"> {{ j.title }}</a></h5>
+                                    </form>
+                                    <!-- <h5><a href ="{% url 'job_details' j.id %}"> {{ j.title }}</a></h5> -->
                                     <p class="featured__details"><i class="fa fa-map-marker job__location"></i>
                                         {{ j.location }}
                                         {% if j.type == '1' %}

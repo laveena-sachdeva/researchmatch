@@ -23,7 +23,7 @@ def validate_is_pdf(file):
         raise ValidationError('Unacceptable file extension.')
 
 
-roles = (  
+roles = (
 ('Professor', 'Professor'),
 ('Student', 'Student'),
 )
