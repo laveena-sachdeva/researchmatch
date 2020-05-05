@@ -80,6 +80,8 @@
                                                value="Delete this job"/>
                         </form>
                         <div class="applicant">
+<<<<<<< HEAD
+                          {% if posted %}
                             {% if applied_data|length %}
                                 <h3>Applicant List</h3><br/>
                                 <style type="text/css">
@@ -147,14 +149,16 @@
                                                     <input type="hidden" name="other_user_id" value={{application.0.user_id}}>
                                                     <a href='javascript: submitChatForm(chat{{application.0.user.username}})'> Chat </a>
 
-                                                </form>                                            
+                                                </form>
                                         <td>
                                         </tr>
                                     {% endfor %}
                                 </table><br/>
                             {% else %}
                                 <h3>No Applicants Matching the Criteria</h3>
+
                             {% endif %}
+                          {% endif %}
                         </div>
                     {% endif %}
                 </div>
