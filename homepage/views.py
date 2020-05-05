@@ -19,6 +19,9 @@ from datetime import date
 # from homepage import generate_signed_url as gen
 import time
 import os
+import requests
+from django.test.client import RequestFactory
+
 
 if os.getenv('GAE_APPLICATION', None):
     from google.cloud import storage
@@ -56,6 +59,8 @@ class JobDetailsView(DetailView):
         return obj
 
     def get(self, request, *args, **kwargs):
+        # print(request.)
+
         try:
             self.object = self.get_object()
         except Http404:
@@ -86,8 +91,41 @@ class JobDetailsView(DetailView):
         return reverse_lazy('job_details', kwargs={'id': self.kwargs['job_id']})
 
     def post(self, request, *args, **kwargs):
-        to_update = Applicant.objects.filter(user_id=kwargs['user_id'],job_id=kwargs['job_id'])
-        to_update.update(status=request.POST.get("acceptance"))
+        if request.POST.get('details'):
+            print("In the post get")
+            print(request.POST)
+            job_id = request.POST.get('job_id')
+            jobs = Job.objects.get(id = job_id)
+            try:
+                print("Jobs")
+                print(jobs)
+                self.object =jobs
+            except Http404:
+                # redirect here
+                raise Http404("Job doesn't exists")
+            context = self.get_context_data(object=self.object)
+            if request.user.myuser.role == "Professor":
+                all_students = Applicant.objects.filter(job_id=job_id).values('user_id', 'status')
+                user_data = list()
+                for i in range(len(all_students)):
+                    user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
+                    user_data.append((user_info, all_students[i]['status'],0))
+                try:
+                    print("Categorizing data")
+                    result = categorize(user_data)
+                    user_data = query(result, self.object.description)
+                    context['applied_data'] = user_data
+                except:
+                    context['applied_data'] = user_data
+            else:
+                status = Applicant.objects.filter(job_id=job_id, user_id=request.user.id).values('status')
+                if status:
+                    context['status'] = status[0]['status']
+            context['role'] = UserProfileInfo.objects.get(user_id=request.user.id).role
+            return self.render_to_response(context)
+        else:
+            to_update = Applicant.objects.filter(user_id=kwargs['user_id'],job_id=kwargs['job_id'])
+            to_update.update(status=request.POST.get("acceptance"))
         # return HttpResponse("Status updated")
         return HttpResponseRedirect(self.get_success_url())
 
@@ -104,14 +142,40 @@ class ApplyJobView(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+        self.request = request
         if form.is_valid():
             messages.info(self.request, 'Successfully applied for the job!')
+            print("Valid form job id?")
+            print(request)
+            print(request.POST)
             return self.form_valid(form)
         else:
             return HttpResponseRedirect(reverse_lazy('index'))
 
     def get_success_url(self):
-        return reverse_lazy('job_details', kwargs={'id': self.kwargs['job_id']})
+        # payload = {'job_id':1}
+        # r =  request.post('https://domain.tld', data=payload)
+        # return reverse_lazy('job_details', kwargs={'id': self.kwargs['job_id']})
+        # request = self.request
+        # request.POST['job_id'] = self.request.POST.get('job_id')
+        # request = RequestFactory().post('/')
+        # request.POST = self.request.POST.copy()
+        # request.POST['job_id'] = self.request.POST.get('job')
+        # request.POST['details'] = "true"
+    #
+    #     self.request.POST = self.request.POST.copy()
+    #     self.request.POST['job_id'] = self.request.POST.get('job')
+    #     self.request.POST['details'] = "true"
+    #     print("success")
+    #     print(self.request)
+    #     print(self.request.POST)
+    #     # view_instance = JobDetailsView.as_view()
+    #     # response = view_instance(self.request)
+        return reverse_lazy('jobs')
+    #     r = requests.post(
+    #         self.request.build_absolute_uri(reverse('job_details', kwargs = {'id':999}))
+    # )
+        # return JobDetailsView().post(self.request)
 
     # def get_form_kwargs(self):
     #     kwargs = super(ApplyJobView, self).get_form_kwargs()
@@ -314,7 +378,7 @@ def display_image(request, img):
     return render(request, 'image.html', context)
 # # shows image in a new tab?
 # def show_image(request, img):
-    
+
 
 def register(request):
     if request.user:
@@ -355,7 +419,7 @@ def register(request):
                     profile.save()
                 else:
                     print("Saving locally")
-                    profile.resume = request.FILES['resume'] 
+                    profile.resume = request.FILES['resume']
                     profile.save()
             registered = True
         else:
@@ -412,7 +476,7 @@ def user_login(request):
             print("They used username: {} and password: {}".format(username,password))
             return HttpResponse("Invalid login details given")
     else:
-        return render(request, './login.html', {})                                
+        return render(request, './login.html', {})
 
 @login_required
 def see_conversations(request):
@@ -528,7 +592,7 @@ def update_profile_in_db(request):
                 bucket_name = os.environ.get("BUCKET_NAME")
                 upload_blob(bucket_name,file_obj, destination_blob_name)
             else:
-                updatedUser.resume = request.FILES['resume'] 
+                updatedUser.resume = request.FILES['resume']
         updatedUser.save()
     return HttpResponseRedirect(reverse('update_profile'))
 
