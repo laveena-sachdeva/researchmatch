@@ -57,9 +57,11 @@ class JobDetailsView(DetailView):
         if obj is None:
             raise Http404("Job doesn't exists")
         return obj
+        # return get_object_or_404(Job, pk=request.session['user_id'])
+
 
     def get(self, request, *args, **kwargs):
-        # print(request.)
+        print("In the GET method now")
 
         try:
             self.object = self.get_object()
@@ -68,18 +70,23 @@ class JobDetailsView(DetailView):
             raise Http404("Job doesn't exists")
         context = self.get_context_data(object=self.object)
         if request.user.myuser.role == "Professor":
-            all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id', 'status')
-            user_data = list()
-            for i in range(len(all_students)):
-                user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
-                user_data.append((user_info, all_students[i]['status'],0))
-            try:
-                print("Categorizing data")
-                result = categorize(user_data)
-                user_data = query(result, self.object.description)
-                context['applied_data'] = user_data
-            except:
-                context['applied_data'] = user_data
+            job = Job.objects.filter(id=kwargs['id'],user_id=request.user.id)
+            if job:
+                all_students = Applicant.objects.filter(job_id=kwargs['id']).values('user_id', 'status')
+                user_data = list()
+                for i in range(len(all_students)):
+                    user_info = UserProfileInfo.objects.get(user_id=all_students[i]['user_id'])
+                    user_data.append((user_info, all_students[i]['status'],0))
+                try:
+                    print("Categorizing data")
+                    result = categorize(user_data)
+                    user_data = query(result, self.object.description)
+                    context['applied_data'] = user_data
+                except:
+                    context['applied_data'] = user_data
+                context['posted'] = True
+            else:
+                context['posted'] = False
         else:
             status = Applicant.objects.filter(job_id=kwargs['id'], user_id=request.user.id).values('status')
             if status:

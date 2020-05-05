@@ -43,6 +43,7 @@ urlpatterns = [
                             url(r'^appliedjobs/$', views.applied_jobs_view, name='applied_jobs_view'),
                             url(r'^delete-jobs/$', views.delete_invalid_jobs, name='delete_invalid_jobs'),
                             path(r'^job_details/<int:id>$',JobDetailsView.as_view(),name='job_details'),
+                            # path(r'job_details',views.job_details_view,name='job_details'),
                             path(r'^job_details/<int:user_id>/<int:job_id>$',JobDetailsView.as_view(),name='app_status'),
                             path('apply-job/<int:job_id>', ApplyJobView.as_view(), name='apply-job'),
                             path('delete-job/<int:job_id>', views.delete_job, name='delete-job'),
