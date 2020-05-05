@@ -70,42 +70,44 @@
                                                value="Delete this job"/>
                         </form>
                         <div class="applicant">
-                            {% if applied_data|length %}
-                                <h3>Applicant List</h3><br/>
-                                <style type="text/css">
-                                td,th
-                                {
-                                    padding:0 5px;
-                                }
-                                </style>
-                                <table>
-                                    <tr><th>Applicant</th><th>Decision</th></tr>
-                                    {% for application in applied_data %}
-                                        <tr>
-                                        {% if application.1 == 'In Process' %}
-                                            <form action="{% url 'app_status' application.0.user_id job.id %}" method="post">
-                                                {% csrf_token %}
-                                                <td><label for="acceptance"> <a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
-                                                <td>
-                                                <select id="acceptance" name="acceptance">
-                                                    <option value="In Process">In Process</option>
-                                                    <option value="Accept">Accept</option>
-                                                    <option value="Reject">Reject</option>
-                                                </select>
-                                                <input type="submit" value="OK">
-                                                </td>
-                                            </form>
-                                        {% else %}
-                                            <td><a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a></td><td>{{application.1}}</td>
-                                        {% endif %}
-                                        <td>
-                                            <a href='/conversation/create/{{ application.0.user_id }}/'> Chat </a>
-                                        <td>
-                                        </tr>
-                                    {% endfor %}
-                                </table><br/>
-                            {% else %}
-                                <h3>No Applicants Matching the Criteria</h3>
+                            {% if posted %}
+                                {% if applied_data|length %}
+                                    <h3>Applicant List</h3><br/>
+                                    <style type="text/css">
+                                    td,th
+                                    {
+                                        padding:0 5px;
+                                    }
+                                    </style>
+                                    <table>
+                                        <tr><th>Applicant</th><th>Decision</th></tr>
+                                        {% for application in applied_data %}
+                                            <tr>
+                                            {% if application.1 == 'In Process' %}
+                                                <form action="{% url 'app_status' application.0.user_id job.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <td><label for="acceptance"> <a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
+                                                    <td>
+                                                    <select id="acceptance" name="acceptance">
+                                                        <option value="In Process">In Process</option>
+                                                        <option value="Accept">Accept</option>
+                                                        <option value="Reject">Reject</option>
+                                                    </select>
+                                                    <input type="submit" value="OK">
+                                                    </td>
+                                                </form>
+                                            {% else %}
+                                                <td><a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a></td><td>{{application.1}}</td>
+                                            {% endif %}
+                                            <td>
+                                                <a href='/conversation/create/{{ application.0.user_id }}/'> Chat </a>
+                                            <td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table><br/>
+                                {% else %}
+                                    <h3>No Applicants Matching the Criteria</h3>
+                                {% endif %}
                             {% endif %}
                         </div>
                     {% endif %}

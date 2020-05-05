@@ -41,7 +41,7 @@
                         <td>
                         <select id="prof" name="prof">
                             {% for entry in prof_list %}
-                                <option value="{{ entry.user_id }}">{{ entry.full_name }}</option>
+                                <option value="{{ entry.user_id }}">{{ entry.full_name }},{{entry}}</option>
                             {% endfor %}
                         </select>
                         <input type="submit" value="OK">
@@ -70,10 +70,15 @@
                     </table>
                 {% elif university %}
                     <p><i>Posted by {{ university }}</i></p>
-                {% elif None %}
+
+                {% elif isempty %}
                     <p><i>No jobs found with this filter</i></p>
                 {% endif %}
-
+            {% if filter != None %}
+                <p><i>Filter : {{ filter }} </i></p>
+            {% else %}
+                <p><i>Select a filter</i></p>
+            {% endif %}
             {% if alljobs %}
                 <div class="row featured align-items-stretch">
                     {% for j in alljobs %}
