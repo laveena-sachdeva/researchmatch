@@ -41,3 +41,10 @@ def get_other_user(conversation,exclude_user):
         return conversation.users.exclude(pk=exclude_user.pk)[0].myuser.full_name + ", " + conversation.users.exclude(pk=exclude_user.pk)[0].username
     except:
         return None
+
+@register.simple_tag(name='get_other_user_id')
+def get_other_user_id(conversation,exclude_user):
+    try:
+        return conversation.users.exclude(pk=exclude_user.pk)[0].id
+    except:
+        return None

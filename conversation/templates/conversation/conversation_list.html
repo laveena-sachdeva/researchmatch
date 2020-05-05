@@ -11,10 +11,28 @@
 	    {% get_last_message conversation as message %}
 			<tr>
 				<td width="30%" style="padding-right: 30px;">
-					<a href="{{ protocol }}{{ domain }}{% url "conversation_update" pk=conversation.pk %}">
+
+					<script type="text/javascript">
+						function submitConversationListForm(x)
+						{
+							var formname = x + "form";
+
+							// window.alert(formname);
+							var f = document.getElementsByName(formname)[0];
+							// window.alert(f);
+							f.submit();
+						}
+						</script>
+
+					    <form name ="{{conversation}}form" action = "{%url 'conversation_update' 999 %}" method = 'POST' enctype="multipart/form-data">
+					    {% csrf_token %}
+					    	
+					        <input type="hidden" name="other_user_id" value={% get_other_user_id conversation request.user %}>
+							<a href="javascript: submitConversationListForm({{conversation}})"> <strong>{% get_other_user conversation request.user %}</strong>
+							</a>
+					    </form> 	
 						<!-- <strong>{{ message.user }}</strong> -->
-						<strong>{% get_other_user conversation request.user%}</strong>
-					</a>
+						
 				</td>
 				<td align="left" style="color: #333333; font-family: Georgia, 'Times New Roman', Times, serif; font-size: 14px; vertical-align: top;" width="70%">
 					<small>{{ message.date|date:"SHORT_DATETIME_FORMAT" }}</small>
