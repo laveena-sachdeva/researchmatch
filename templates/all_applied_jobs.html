@@ -70,10 +70,15 @@
                     </table>
                 {% elif university %}
                     <p><i>Posted by {{ university }}</i></p>
-                {% elif None %}
+
+                {% elif isempty %}
                     <p><i>No jobs found with this filter</i></p>
                 {% endif %}
-
+            {% if filter != None %}
+                <p><i>Filter : {{ filter }} </i></p>
+            {% else %}
+                <p><i>Select a filter</i></p>
+            {% endif %}
             {% if alljobs %}
                 <div class="row featured align-items-stretch">
                     {% for j in alljobs %}
@@ -93,7 +98,7 @@
                                 </div>
                                 <div class="content">
                                     <!-- <p> The job id is {{ job.id }}</p> -->
-                                    <!-- <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5>                                 -->
+                                    <!-- <h5><a href ="/job_details/{{job.id}}"> {{ job.title }}</a></h5> 
                                     <h5><a href ="{% url 'job_details' j.id %}"> {{ j.title }}</a></h5>
                                     <p class="featured__details"><i class="fa fa-map-marker job__location"></i>
                                         {{ j.location }}
