@@ -38,6 +38,7 @@ img {
                     <div style = "position: absolute;top: 8px;right: 16px;font-size: 18px;" >
                         <h1 class="heading">{{allinfo.myuser.full_name}}, {{allinfo.username}}
                         <br/> {{allinfo.email}} </h1>
+              {% if allinfo.id == request.user.id %}
                     <script type="text/javascript">
                         function submitUpdateProfileForm()
                         {
@@ -50,7 +51,7 @@ img {
                       {% csrf_token %}
                        <a href = 'javascript: submitUpdateProfileForm()'> Update Profile </a>
                    </form>
-
+              {% endif %}
 
                     </div>
                 </div>
@@ -95,10 +96,21 @@ img {
                 </div>
             </div>
         </div> 
-        {% if allinfo.id != request.user.id %}
-          <a href='/conversation/create/{{ allinfo.id }}/'> MESSAGE ME </a>
-        {% endif %}
 
+      {% if allinfo.id != request.user.id %}
+        <script type="text/javascript">
+            function submitChatForm(x)
+            {
+                document.chatForm.submit()
+            }
+        </script>
+            <form name ="chatForm" action = "{%url 'conversation_create' %}" method = 'POST'>
+            {% csrf_token %}
+
+                <input type="hidden" name="other_user_id" value={{allinfo.id}}>
+                <a href='javascript: submitChatForm()'> Message Me </a>
+            </form>
+      {% endif %}
     </section>
 
 {% endblock %}

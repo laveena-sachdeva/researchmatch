@@ -25,7 +25,10 @@
     {% endfor %}
 {% endif %}
 <ul id="conversation-messages" class="list-group">
+
+
     {% for message in object.messages.all %}
+
         <li class="list-group-item">
             <strong>{{ message.user.myuser.full_name }}</strong>
             <small class="pull-right text-muted">{{ message.date|date:"SHORT_DATETIME_FORMAT" }}</small>
@@ -49,9 +52,15 @@
         {% endfor %}
         <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
     </form> -->
-    <form name ="chatForm" action = "{%url 'conversation_update' 999 %}" method = 'POST' enctype="multipart/form-data">
-    {% csrf_token %}
+    {% if object.messages %}
 
+        <form name ="chatForm" action = "{%url 'conversation_update' 999  %}" method = 'POST' enctype="multipart/form-data">
+        <!-- <p> conversation update </p> -->
+    {% else %}
+        <form name ="chatForm" action = "{%url 'conversation_create' %}" method = 'POST' enctype="multipart/form-data">
+        <!-- <p> conversation create </p> -->
+    {% endif %}
+    {% csrf_token %}
         <input type="hidden" name="other_user_id" value={{initial_user.id}}>
         {% for field in form %}
             {% include "django_libs/partials/form_field.html" with hide_label=1 %}

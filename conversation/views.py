@@ -19,7 +19,7 @@ from django.views.generic import (
 from django_libs.loaders import load_member
 from django_libs.utils.email import send_email
 from django_libs.views_mixins import AjaxResponseMixin
-
+import requests
 from .forms import MessageForm
 from .models import BlockedUser, Conversation
 
@@ -193,6 +193,8 @@ class ConversationCreateView(ConversationViewMixin, CreateView):
             request.session['_old_post'] = request.POST
             return HttpResponseRedirect(reverse(
                 'conversation_update', kwargs={'pk': 999}))
+            # return  requests.post(request.build_absolute_uri(reverse('conversation_update', kwargs = {'pk':999})))
+            
             # return HttpResponseRedirect(reverse('conversation_update'))
         return super(ConversationCreateView, self).dispatch(
             request, {'pk': initial_user_id},  kwargs={'pk': initial_user_id})
