@@ -7,10 +7,11 @@
 {% endblock %}
 
 {% block body_block %}
-
+        <a href = '/jobs'> Go back to all jobs </a>
+   
         <div class="container">
             <h1 class="heading">{{ job.title }}<br>
-                <small>at <a href="#"> {{ job.company_name }}</a></small>
+                <small>at <a href="#"> {{ job.workplace_name }}</a></small>
             </h1>
             <div class="job-detail-description"><i class="fa fa-map-marker job__location"> </i>
                     <script type="text/javascript">
@@ -101,7 +102,7 @@
                                                  <script type="text/javascript">
                                                             function submitVisitProfileForm(x)
                                                             {
-                                                                window.alert(x);
+                                                                // window.alert(x);
                                                                 x.submit();
                                                             }
                                                 </script>
@@ -170,8 +171,8 @@
                 </div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-3">
-                    <h4>About {{ job.company_name }}</h4>
-                    <p class="job-detail__company-description">{{ job.company_description }}</p>
+                    <h4>About {{ job.workplace_name }}</h4>
+                    <p class="job-detail__company-description">{{ job.workplace_description }}</p>
                     <p class="job-detail__social social social--outline">
                         <a href="{{ job.website }}" data-toggle="tooltip" data-placement="top" title="Website"
                            class="link">
