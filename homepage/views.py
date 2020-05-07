@@ -233,7 +233,11 @@ def index(request):
             return render(request, './index.html', context)
         elif role == "Professor":
             alljobs = Job.objects.filter(user_id=request.user.id)
-            context = {'alljobs': alljobs}
+            if alljobs:
+                context = {'alljobs': alljobs}
+            else:
+                alljobs = Job.objects.all()
+                context = {'alljobs': alljobs}
             return render(request, './index.html', context)
     except:
         return render(request, './index.html')
