@@ -24,13 +24,26 @@ img {
 
 {% block body_block %}
     <section>
+                <script type="text/javascript">
+                    function submitVisitProfileForm()
+                    {
+                      // window.alert(visitProfileForm);
+                      var f = document.getElementsByName("visitProfileForm")[0];
+                      // window.alert(f);
+                      f.submit();
+                    }
+                </script>
+            <form name="visitProfileForm" action="{% url 'view_profile' %}">
+                  {% csrf_token %}
+                  <a href = 'javascript: submitVisitProfileForm()'> Go back to profile </a>
+            </form>    
     	<form action="/update_profile/"  enctype="multipart/form-data" method="POST">
 		{% csrf_token %}
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 mx-auto">
-                <div class = 'title-cover'>
-                    <div class = "profile_pic" align = "left">
+                <div class = 'title-cover'>                
+           <div class = "profile_pic" align = "left">
                       {% if profile_link %}
                         <img src = "{{ profile_link }}" width = "240" style = 'object-fit: cover; width:230px;height:230px;' />
                       {% else %}
