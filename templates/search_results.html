@@ -12,8 +12,26 @@
                                     <tr><th>Your search matched the following users</th></tr>
                                     {% for r in results %}
                                         <tr>
-                                            <td><a href="/view_profile/{{r.user_id}}"> {{ r.full_name }}, {{r.user.username}} </a></td><td>{{application.1}}</td>
                                         <td>
+                                                <script type="text/javascript">
+                                                            function submitVisitProfileForm(x)
+                                                            {
+                                                                // window.alert(x);
+                                                                x.submit();
+                                                            }
+                                                </script>
+
+                                                <form name="{{r}}" action="{% url 'view_profile' %}" method = "POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="user_id" value = "{{r.user_id}}"/>
+                                                <a href = 'javascript: submitVisitProfileForm({{r}})'>
+                                                {{ r.full_name }}, {{r.user.username}}  </a>
+                                                </form>
+
+                                            <!-- <a href="/view_profile/{{r.user_id}}"> {{ r.full_name }}, {{r.user.username}} </a></td><td>{{application.1}} -->
+
+                                        </td>
+                
                                         </tr>
                                     {% endfor %}
                                 </table><br/>

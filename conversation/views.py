@@ -19,21 +19,42 @@ from django.views.generic import (
 from django_libs.loaders import load_member
 from django_libs.utils.email import send_email
 from django_libs.views_mixins import AjaxResponseMixin
-
+import requests
 from .forms import MessageForm
 from .models import BlockedUser, Conversation
 
+def int_str(val, keyspace):
+    """ Turn a positive integer into a string. """
+    assert val >= 0
+    out = ""
+    while val > 0:
+        val, digit = divmod(val, len(keyspace))
+        out += keyspace[digit]
+    return out[::-1]
+
+def str_int(val, keyspace):
+    """ Turn a string into a positive integer. """
+    out = 0
+    for c in val:
+        out = out * len(keyspace) + keyspace.index(c)
+    return out
+
+keyspace = "fw59eorpma2nvxb07liqt83_u6kgzs41-ycdjh"
 
 class ConversationViewMixin(AjaxResponseMixin):
     """Mixin for conversation related views."""
     model = Conversation
 
     def get_form_class(self):
+        print("Get Form Class")
+
         if hasattr(settings, 'CONVERSATION_MESSAGE_FORM'):
             return load_member(settings.CONVERSATION_MESSAGE_FORM)
         return MessageForm
 
     def get_form_kwargs(self, *args, **kwargs):
+        print("Get Form Kwargs")
+
         kwargs = super(ConversationViewMixin, self).get_form_kwargs(
             *args, **kwargs)
 
@@ -48,6 +69,7 @@ class ConversationViewMixin(AjaxResponseMixin):
         return kwargs
 
     def get_context_data(self,**kwargs):
+        print("Get context data")
 
         ctx = super(ConversationViewMixin, self).get_context_data(**kwargs)
         conversations = {}
@@ -66,10 +88,13 @@ class ConversationViewMixin(AjaxResponseMixin):
                 reversed(sorted(conversations.items()))),
             'initial_user':self.initial_user if hasattr(
                 self, 'initial_user') else None})
+        print("End context data")
         return ctx
 
     def get_success_url(self):
         # Send instant notifications
+        print("Get success url")
+
         if (not hasattr(settings, 'CONVERSATION_ENABLE_NOTIFICATIONS') or
                 settings.CONVERSATION_ENABLE_NOTIFICATIONS):
             for user in self.object.users.exclude(pk=self.user.pk):
@@ -90,25 +115,57 @@ class ConversationViewMixin(AjaxResponseMixin):
                     priority='medium',
                 )
                 self.object.notified.add(user)
-        return reverse('conversation_update', kwargs={'pk': self.object.pk})
+        print("before redirecting")
+        print(self.request)
+        self.request.session['_old_post'] = self.request.POST
+        return reverse('conversation_update', kwargs={'pk': 999})
 
 
 class ConversationUpdateView(ConversationViewMixin, UpdateView):
+    model = Conversation
+    def get_object(self, queryset=None):
+        obj = super(ConversationUpdateView, self).get_object(queryset=queryset)
+        if obj is None:
+            raise Http404("Job doesn't exists")
+        return obj
     """View to update a conversation."""
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.user = request.user
-        # Check the permission
-        self.kwargs = kwargs
-        self.object = self.get_object()
-        if self.user not in self.object.users.all():
+        print("conversation update dispatch")
+        old_post = request.session.get('_old_post')
+        if request.method == "POST":
+            old_post = request.POST
+        print(old_post)
+        self.user = request.user
+        try:
+            initial_user_id = old_post['other_user_id']
+
+            print("initial_user_id")
+            print(initial_user_id)
+            print(request.POST)
+            self.initial_user = get_user_model().objects.get(
+                pk=initial_user_id)
+        except get_user_model().DoesNotExist:
+            print("or here?")
             raise Http404
-        # Mark as read
-        self.object.unread_by.remove(self.user)
+        print("is our here?")
+        print(self.initial_user)
+
+        # Fecth the existing conversation of these users
+        conversations = self.user.conversations.filter(pk__in=self.initial_user.conversations.values_list('pk'))
+        self.kwargs = {'pk': conversations[0].pk}
+
+        self.object = self.get_object(conversations)
+        print(self.object)
+        print(conversations)
+        # initial_user_id = request.POST.get('other_user_id')
         # If conversation has been read by all participants
         if self.object.unread_by.count() == 0:
             self.object.read_by_all = now()
             self.object.save()
+        print("request")
+        print(request)
         return super(ConversationUpdateView, self).dispatch(
             request, *args, **kwargs)
 
@@ -117,22 +174,30 @@ class ConversationCreateView(ConversationViewMixin, CreateView):
     """View to start a new conversation."""
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-
+        print("conversation create dispatch")
         self.user = request.user
 
         try:
+            initial_user_id = request.POST.get('other_user_id')
+            print("initial_user_id")
+            print(initial_user_id)
             self.initial_user = get_user_model().objects.get(
-                pk=kwargs['user_pk'])
+                pk=initial_user_id)
         except get_user_model().DoesNotExist:
+            print("is this one raised?")
             raise Http404
         # Check for an existing conversation of these users
-        conversations = self.user.conversations.filter(
-            pk__in=self.initial_user.conversations.values_list('pk'))
+        conversations = self.user.conversations.filter(pk__in=self.initial_user.conversations.values_list('pk'))
         if conversations:
+            print(conversations)
+            request.session['_old_post'] = request.POST
             return HttpResponseRedirect(reverse(
-                'conversation_update', kwargs={'pk': conversations[0].pk}))
+                'conversation_update', kwargs={'pk': 999}))
+            # return  requests.post(request.build_absolute_uri(reverse('conversation_update', kwargs = {'pk':999})))
+            
+            # return HttpResponseRedirect(reverse('conversation_update'))
         return super(ConversationCreateView, self).dispatch(
-            request, {'pk': kwargs['user_pk']},  kwargs={'pk': kwargs['user_pk']})
+            request, {'pk': initial_user_id},  kwargs={'pk': initial_user_id})
 
 
 class ConversationListView(TemplateView):

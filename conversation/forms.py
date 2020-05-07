@@ -22,6 +22,7 @@ class MessageForm(forms.ModelForm):
             Q(blocked_by=self.user, user__in=conversation_users) |
             Q(user=self.user, blocked_by__in=conversation_users),
         )
+        print("end of form")
         super(MessageForm, self).__init__(*args, **kwargs)
 
     def clean(self):

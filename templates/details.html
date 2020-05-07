@@ -7,13 +7,25 @@
 {% endblock %}
 
 {% block body_block %}
-
+        <a href = '/jobs'> Go back to all jobs </a>
+   
         <div class="container">
             <h1 class="heading">{{ job.title }}<br>
-                <small>at <a href="#"> {{ job.company_name }}</a></small>
+                <small>at <a href="#"> {{ job.workplace_name }}</a></small>
             </h1>
             <div class="job-detail-description"><i class="fa fa-map-marker job__location"> </i>
-                Posted by <a href = "/view_profile/{{job.user.id}}">{{job.user.myuser.full_name}} </a>|{{ job.location }} | Posted {{ job.created_at|timesince }} |
+                    <script type="text/javascript">
+                    function visitProfessorProfile()
+                        {
+                        document.visitProfileForm.submit();
+                        }
+                    </script>
+                <form name="visitProfileForm" action="{% url 'view_profile' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value = "{{job.user.id}}">
+                      Posted by <a href = 'javascript: visitProfessorProfile()'> {{job.user.myuser.full_name}} </a>
+                </form>
+                {{ job.location }} | Posted {{ job.created_at|timesince }} |
                 {% if job.type == '1' %}
                     <span class="badge featured-badge badge-success">Full time</span>
                 {% elif job.type == '2' %}
@@ -63,6 +75,8 @@
                             {% endif %}
                         </div>
                     {% elif role == 'Professor' %}
+                      {% if posted %}
+
                         <form action="{% url 'delete-job' job.id %}" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="job" value="{{ job.id }}">
@@ -70,52 +84,95 @@
                                                value="Delete this job"/>
                         </form>
                         <div class="applicant">
-                            {% if posted %}
-                                {% if applied_data|length %}
-                                    <h3>Applicant List</h3><br/>
-                                    <style type="text/css">
-                                    td,th
-                                    {
-                                        padding:0 5px;
-                                    }
-                                    </style>
-                                    <table>
-                                        <tr><th>Applicant</th><th>Decision</th></tr>
-                                        {% for application in applied_data %}
-                                            <tr>
-                                            {% if application.1 == 'In Process' %}
-                                                <form action="{% url 'app_status' application.0.user_id job.id %}" method="post">
-                                                    {% csrf_token %}
-                                                    <td><label for="acceptance"> <a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
-                                                    <td>
-                                                    <select id="acceptance" name="acceptance">
-                                                        <option value="In Process">In Process</option>
-                                                        <option value="Accept">Accept</option>
-                                                        <option value="Reject">Reject</option>
-                                                    </select>
-                                                    <input type="submit" value="OK">
-                                                    </td>
+
+                            {% if applied_data|length %}
+                                <h3>Applicant List</h3><br/>
+                                <style type="text/css">
+                                td,th
+                                {
+                                    padding:0 5px;
+                                }
+                                </style>
+                                <table>
+                                    <tr><th>Applicant</th><th>Decision</th></tr>
+                                    {% for application in applied_data %}
+                                        <tr>
+                                        {% if application.1 == 'In Process' %}
+
+                                                 <script type="text/javascript">
+                                                            function submitVisitProfileForm(x)
+                                                            {
+                                                                // window.alert(x);
+                                                                x.submit();
+                                                            }
+                                                </script>
+
+                                                <form name="{{application.0.user.username}}" action="{% url 'view_profile' %}" method = "POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="user_id" value = "{{application.0.user_id}}"/>
+                                                <td><label for="acceptance"> <a href = 'javascript: submitVisitProfileForm({{application.0.user.username}})'> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
                                                 </form>
-                                            {% else %}
-                                                <td><a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a></td><td>{{application.1}}</td>
-                                            {% endif %}
-                                            <td>
-                                                <a href='/conversation/create/{{ application.0.user_id }}/'> Chat </a>
-                                            <td>
-                                            </tr>
-                                        {% endfor %}
-                                    </table><br/>
-                                {% else %}
-                                    <h3>No Applicants Matching the Criteria</h3>
-                                {% endif %}
+<!--                                                 <td><label for="acceptance"> <a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a> </label></td>
+                                                <td> -->
+                                            <form action="{% url 'app_status' application.0.user_id job.id %}" method="post">
+                                                {% csrf_token %}
+                                                <td>
+                                                <select id="acceptance" name="acceptance">
+                                                    <option value="In Process">In Process</option>
+                                                    <option value="Accept">Accept</option>
+                                                    <option value="Reject">Reject</option>
+                                                </select>
+                                                <input type="submit" value="OK">
+                                                </td>
+                                            </form>
+                                        {% else %}
+                                           <!--  <td><a href="/view_profile/{{application.0.user_id}}"> {{ application.0.full_name }} {{application.0.linkedin_url}} </a></td><td>{{application.1}}</td> -->
+                                               <script type="text/javascript">
+                                                            function submitVisitProfileForm(x)
+                                                            {   
+                                                                window.alert(x);
+                                                                x.submit();
+                                                            }
+                                                </script>
+                                             <form name="{{application.0.user.username}}" action="{% url 'view_profile' %}" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="user_id" value = "{{application.0.user_id}}"/>
+                                                <td><label for="acceptance"> <a href = 'javascript: submitVisitProfileForm({{application.0.user.username}})'> {{ application.0.full_name }} {{application.0.linkedin_url}}
+                                                 </a> </label></td>
+                                            </form>
+                                                <td>{{application.1}}</td>
+                                        {% endif %}
+                                        <td>
+                                            <!-- <a href='/conversation/create/{{ application.0.user_id }}/'> Chat </a> -->
+                                            <script type="text/javascript">
+                                                function submitChatForm(x)
+                                                {
+                                                    x.submit()
+                                                }
+                                            </script>
+                                                <form name ="chat{{application.0.user.username}}" action = "{%url 'conversation_create' %}" method = 'POST'>
+                                                {% csrf_token %}
+
+                                                    <input type="hidden" name="other_user_id" value={{application.0.user_id}}>
+                                                    <a href='javascript: submitChatForm(chat{{application.0.user.username}})'> Chat </a>
+
+                                                </form>
+                                        <td>
+                                        </tr>
+                                    {% endfor %}
+                                </table><br/>
+                            {% else %}
+                                <h3>No Applicants Matching the Criteria</h3>
+
                             {% endif %}
+                          {% endif %}
                         </div>
                     {% endif %}
                 </div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-3">
-                    <h4>About {{ job.company_name }}</h4>
-                    <p class="job-detail__company-description">{{ job.company_description }}</p>
+                    <h4>About {{ job.workplace_name }}</h4>
+                    <p class="job-detail__company-description">{{ job.workplace_description }}</p>
                     <p class="job-detail__social social social--outline">
                         <a href="{{ job.website }}" data-toggle="tooltip" data-placement="top" title="Website"
                            class="link">
