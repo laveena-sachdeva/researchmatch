@@ -543,17 +543,18 @@ def sign_url(filename):
     import os, google.auth
     from google.auth.transport import requests
     from google.auth import compute_engine
-    from datetime import datetime, timedelta
+    # from datetime import datetime, timedelta
     from google.cloud import storage
+    import datetime
 
     auth_request = requests.Request()
     credentials, project = google.auth.default()
     storage_client = storage.Client(project, credentials)
     data_bucket = storage_client.lookup_bucket(os.getenv("BUCKET_NAME"))
     signed_blob_path = data_bucket.blob(filename)
-    expires_at_ms = datetime.now() + timedelta(minutes=60)
+    # expires_at_ms = datetime.now() + timedelta(minutes=60)
     signing_credentials = compute_engine.IDTokenCredentials(auth_request, "", service_account_email=storage_client._credentials.service_account_email,)
-    signed_url = signed_blob_path.generate_signed_url(expires_at_ms, credentials=signing_credentials, version="v4")
+    signed_url = signed_blob_path.generate_signed_url(datetime.timedelta(minutes=60), credentials=signing_credentials, version="v4")
     return signed_url
 
 @login_required
